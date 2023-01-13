@@ -1,0 +1,5 @@
+print("Among the debris you notice a shimmer.\"What could that be?\" You mutter to nobody in particular.")
+print("\"The Giant Hog-nosed Spider Vultures can live for over one hundred years and grow up to eleven-hundred pounds!\" The wizard proclaimed.\n \"You truly have no idea the amount of power one derive from a creature such as this.\"")
+print("Learning to code has apparently awoken some amount of fantasy story telling inside of me.")
+print("There are three things all wise men fear.\n A storm at sea,\n a moonless night,\n and the anger of a gentle man.")
+print("War, \nWar never changes.")
