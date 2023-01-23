@@ -26,7 +26,7 @@ arcade.draw_circle_filled(150, 250, 40, arcade.color.ARYLIDE_YELLOW)
 arcade.draw_lrtb_rectangle_filled(0, 600, 250, 0, arcade.csscolor.BLUE)
 
 # Boat
-# Arc is centered at (300, 340) with a width of 110 and a height of -100
+# Arc is centered at (300, 275) with a width of 125 and a height of -150
 # The starting angle is 0, and ending angle is 180.
 arcade.draw_arc_filled(300, 275, 125, -150, arcade.csscolor.SIENNA, 0, 180)
 
