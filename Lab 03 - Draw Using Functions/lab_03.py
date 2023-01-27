@@ -124,12 +124,46 @@ animate_v1.draw_bubble_a = 50
 animate_v1.draw_bubble_b = 50
 
 def animate_v2(delta_time):
-    draw_cloud(animate_v2.x, 800)
-    animate_v2.x += D
-    if animate_v2.x >= 1000:
-        animate_v2.x = 0
 
-animate_v2.x = 0
+    draw_cloud(animate_v2.a - 200, 900)
+    draw_cloud(animate_v2.a - 2000, 750)
+
+    draw_cloud(animate_v2.b - 1600, 800)
+    draw_cloud(animate_v2.b, 1700)
+
+    draw_cloud(animate_v2.c - 1400, 900)
+    draw_cloud(animate_v2.c - 1200, 600)
+
+    draw_cloud(animate_v2.d - 600, 750)
+    draw_cloud(animate_v2.d - 900, 800)
+
+    animate_v2.a += D
+    animate_v2.b += D
+    animate_v2.c += D
+    animate_v2.d += D
+
+    if animate_v2.a >= 2000:
+        animate_v2.a = 0
+
+    if animate_v2.b >= 2000:
+        animate_v2.b = 0
+
+    if animate_v2.c >= 2000:
+        animate_v2.c = 0
+
+    if animate_v2.d >= 2000:
+        animate_v2.d = 0
+
+# defining variables to be used by clouds
+
+animate_v2.a = -500
+animate_v2.b = -500
+animate_v2.c = -500
+animate_v2.d = -500
+animate_v2.e = -500
+
+
+
 
 # Defining main function
 def main():
