@@ -2,23 +2,38 @@
 
 import arcade
 
-# Set variables tied to screen width and height to be used in later functions
+# Set variables to be used in later functions
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 1000
+A = 6
+B = 9
+C = 3
+D = 10
+# Function for drawing the clouds
 
-# Function for drawing our water
+def draw_cloud(x, y):
+    arcade.draw_circle_filled(x, y, 50, arcade.csscolor.WHITE)
+    arcade.draw_circle_filled(x - 50, y + 50, 50, arcade.csscolor.WHITE)
+    arcade.draw_circle_filled(x + 50, y + 50, 50, arcade.csscolor.WHITE)
+    arcade.draw_circle_filled(x - 50, y, 50, arcade.csscolor.WHITE)
+    arcade.draw_circle_filled(x + 50, y, 50, arcade.csscolor.WHITE)
+    arcade.draw_circle_filled(x, y + 75, 50, arcade.csscolor.WHITE)
+
+# Function for drawing the water
+
 def draw_water():
     arcade.draw_rectangle_filled(500, 0, SCREEN_WIDTH, -500, arcade.csscolor.BLUE)
 
 # Defining a function to draw a bubble at (x, y)
+
 def draw_bubble(x, y):
     arcade.draw_circle_filled(x, y, 25, arcade.csscolor.WHITE)
-    arcade.draw_arc_outline(x, y, 50, 50, arcade.csscolor.BLACK, 0, 360, 3)
-    arcade.draw_arc_outline(x + 7, y + 10, 10, 10, arcade.csscolor.BLACK, 0, 360, 2)
-
+    arcade.draw_circle_outline(x, y, 25, arcade.csscolor.BLACK, 3)
+    arcade.draw_circle_outline(x + 7, y + 10, 5, arcade.csscolor.BLACK, 2)
 
 # Defining a function to draw our bubbles, as well as animate them
+
 def animate_v1(delta_time):
     arcade.start_render()
 
@@ -57,7 +72,7 @@ def animate_v1(delta_time):
     draw_bubble(150, animate_v1.draw_bubble_b + 150)
     draw_bubble(750, animate_v1.draw_bubble_b+ 150)
 
-    draw_bubble(750, animate_v1.draw_bubble_w + 50)
+    draw_bubble(800, animate_v1.draw_bubble_w + 50)
     draw_bubble(350, animate_v1.draw_bubble_w + 250)
 
 
@@ -71,11 +86,11 @@ def animate_v1(delta_time):
     # Giving different values for Y to increase by, so I can have different speeds of bubble movement.
 
     animate_v1.draw_bubble_y += 6
-    animate_v1.draw_bubble_z += 12
+    animate_v1.draw_bubble_z += 3
     animate_v1.draw_bubble_x += 9
-    animate_v1.draw_bubble_w += 12
-    animate_v1.draw_bubble_a += 15
-    animate_v1.draw_bubble_b += 18
+    animate_v1.draw_bubble_w += 6
+    animate_v1.draw_bubble_a += 9
+    animate_v1.draw_bubble_b += 6
 
 
 
@@ -108,11 +123,21 @@ animate_v1.draw_bubble_w = 100
 animate_v1.draw_bubble_a = 50
 animate_v1.draw_bubble_b = 50
 
+def animate_v2(delta_time):
+    draw_cloud(animate_v2.x, 800)
+    animate_v2.x += D
+    if animate_v2.x >= 1000:
+        animate_v2.x = 0
+
+animate_v2.x = 0
+
 # Defining main function
 def main():
     arcade.open_window(1000, 1000, "The Function drawing")
 
     arcade.set_background_color(arcade.csscolor.SKY_BLUE)
+
+    arcade.schedule(animate_v2, 1 / 60)
 
     arcade.schedule(animate_v1, 1 / 60)
 
