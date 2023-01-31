@@ -126,16 +126,12 @@ animate_v1.draw_bubble_b = 50
 def animate_v2(delta_time):
 
     draw_cloud(animate_v2.a - 200, 900)
-    draw_cloud(animate_v2.a - 2000, 750)
+    draw_cloud(animate_v2.c - 400, 750)
 
-    draw_cloud(animate_v2.b - 1600, 800)
-    draw_cloud(animate_v2.b, 1700)
+    draw_cloud(animate_v2.b + 400, 800)
+    draw_cloud(animate_v2.d + 800, 1700)
 
-    draw_cloud(animate_v2.c - 1400, 900)
-    draw_cloud(animate_v2.c - 1200, 600)
 
-    draw_cloud(animate_v2.d - 600, 750)
-    draw_cloud(animate_v2.d - 900, 800)
 
     animate_v2.a += D
     animate_v2.b += D
