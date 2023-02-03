@@ -32,12 +32,19 @@ def draw_bubble(x, y):
     arcade.draw_circle_outline(x, y, 25, arcade.csscolor.BLACK, 3)
     arcade.draw_circle_outline(x + 7, y + 10, 5, arcade.csscolor.BLACK, 2)
 
+# Drawing a sun in the sky
+
+def draw_sun(x, y):
+    arcade.draw_circle_filled(x, y, 150, arcade.csscolor.ORANGE)
+
 # Defining a function to draw our bubbles, as well as animate them
 
 def animate_v1(delta_time):
     arcade.start_render()
 
     draw_water()
+
+    draw_sun(100, 1000)
 
     draw_bubble(0, 250)
     draw_bubble(50, 260)
@@ -92,8 +99,6 @@ def animate_v1(delta_time):
     animate_v1.draw_bubble_a += 9
     animate_v1.draw_bubble_b += 6
 
-
-
     # If statements to reset bubbles to bubble line for repeating animation.
 
     if animate_v1.draw_bubble_a >= 1000:
@@ -123,6 +128,7 @@ animate_v1.draw_bubble_w = 100
 animate_v1.draw_bubble_a = 50
 animate_v1.draw_bubble_b = 50
 
+# Defining second animation for clouds
 def animate_v2(delta_time):
 
     draw_cloud(animate_v2.a - 200, 900)
@@ -151,7 +157,6 @@ def animate_v2(delta_time):
         animate_v2.d = 0
 
 # defining variables to be used by clouds
-
 animate_v2.a = -500
 animate_v2.b = -500
 animate_v2.c = -500
@@ -174,5 +179,4 @@ def main():
     arcade.run()
 
 # Running the main function
-
 main()
