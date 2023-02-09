@@ -60,7 +60,7 @@ def main():
 
         elif user_choice.capitalize() == "C":
             print("Full speed ahead!")
-            miles_traveled += random.randint(9, 20)
+            miles_traveled += random.randint(12, 20)
             print("You have traveled", miles_traveled, "miles!")
             thirst += 1
             camel_tiredness += random.randint(1, 3)
