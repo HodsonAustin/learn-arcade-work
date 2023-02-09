@@ -16,7 +16,7 @@ def main():
     print("Welcome to Camel!")
     print("You have stolen a camel to make your way across the great Mobi desert.")
     print("The natives want their camel back and are chasing you down! Survive your")
-    print("desert trek and out run the natives")
+    print("desert trek and out run the natives.")
 
     # Setting our done variable to false, so it can be used in our while function
     done = False
@@ -44,8 +44,8 @@ def main():
             distance_natives_traveled += random.randint(7, 15)
 
         elif user_choice.capitalize() == "B":
-            print("You try not to push your camel too hard as you head towards freedom.")
-            miles_traveled += random.randint(8, 18)
+            print("You keep the camel running at a moderate pace.")
+            miles_traveled += random.randint(5, 15)
             print("You have traveled", miles_traveled, "miles!")
             thirst += 1
             camel_tiredness += 1
@@ -60,7 +60,7 @@ def main():
 
         elif user_choice.capitalize() == "C":
             print("Full speed ahead!")
-            miles_traveled += random.randint(12, 20)
+            miles_traveled += random.randint(9, 20)
             print("You have traveled", miles_traveled, "miles!")
             thirst += 1
             camel_tiredness += random.randint(1, 3)
@@ -100,6 +100,7 @@ def main():
             done = True
         if distance_natives_traveled >= miles_traveled:
             print("You have been caught by the natives.")
+            print("They leave you in the desert to die.")
             done = True
         elif int(miles_traveled - distance_natives_traveled) <= 15:
             print("The natives are getting close")
