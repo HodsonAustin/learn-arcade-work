@@ -16,7 +16,7 @@ def main():
     print("Welcome to Camel!")
     print("You have stolen a camel to make your way across the great Mobi desert.")
     print("The natives want their camel back and are chasing you down! Survive your")
-    print("desert trek and out run the natives.")
+    print("desert trek and escape the area before the natives catch you.")
 
     # Setting our done variable to false, so it can be used in our while function
     done = False
@@ -79,6 +79,7 @@ def main():
             camel_tiredness = 0
             distance_natives_traveled += random.randint(7, 15)
 
+        # elif for if the user would like to quit.
         elif user_choice.capitalize() == "Q":
             done = True
 
@@ -98,15 +99,19 @@ def main():
         elif camel_tiredness > 8:
             print("Your camel has died from exertion.")
             done = True
-        if distance_natives_traveled >= miles_traveled:
+        if distance_natives_traveled >= miles_traveled and miles_traveled < 200:
             print("You have been caught by the natives.")
             print("They leave you in the desert to die.")
             done = True
-        elif int(miles_traveled - distance_natives_traveled) <= 15:
+        elif int(miles_traveled - distance_natives_traveled) <= 15 and camel_tiredness < 8:
             print("The natives are getting close")
-        elif miles_traveled >= 200:
+        elif miles_traveled >= 200 and camel_tiredness < 8 and thirst < 6:
             print("You have escaped with the camel and won the game!")
             print("Congratulations")
+            done = True
+        elif miles_traveled >= 200 and camel_tiredness >= 8 and thirst >= 6:
+            print("You have escaped the area, however you killed the camel in the process.")
+            print("You have lost.")
             done = True
 
 
