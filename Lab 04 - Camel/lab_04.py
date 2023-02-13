@@ -52,7 +52,7 @@ def main():
             distance_natives_traveled += random.randint(7, 15)
 
             # Random chance of Oasis
-            if random.randrange(20) == 1:
+            if random.randrange(20) == 1 and camel_tiredness < 8 and thirst < 6:
                 print("You have found an Oasis!")
                 thirst *= 0
                 camel_tiredness = 0
@@ -67,7 +67,7 @@ def main():
             distance_natives_traveled += random.randint(7, 15)
 
             # Random chance of Oasis
-            if random.randrange(20) == 1:
+            if random.randrange(20) == 1 and camel_tiredness < 8 and thirst < 6:
                 print("You have found an Oasis!")
                 thirst = 0
                 camel_tiredness = 0
