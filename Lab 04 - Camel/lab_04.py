@@ -41,7 +41,7 @@ def main():
             print("You take a drink from your canteen!")
             thirst = 0
             drinks_in_canteen -= 1
-            distance_natives_traveled += random.randint(7, 15)
+            distance_natives_traveled += random.randint(4, 10)
 
         elif user_choice.capitalize() == "B":
             print("You keep the camel running at a moderate pace.")
@@ -54,7 +54,7 @@ def main():
             # Random chance of Oasis
             if random.randrange(20) == 1 and camel_tiredness < 8 and thirst < 6:
                 print("You have found an Oasis!")
-                thirst *= 0
+                thirst = 0
                 camel_tiredness = 0
                 drinks_in_canteen = 3
 
