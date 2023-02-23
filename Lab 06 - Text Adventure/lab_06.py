@@ -20,12 +20,25 @@ def main():
 
     """Creating rooms with attributes"""
 
-    room0 = Room("You are in a cave. To your South is a large metal door with torches on either side of it.\n To your North leads deeper into the cave. To your East and West are damp cave walls.", 2, None, None, None)
-    room1 = Room("You have entered a well lit part of the cave filled with rough cut tables and turned over chairs. \nIt appears this must be a dining area. There is a foul smell emanating from the room.\n There is a door to the north or you go back to the split in the caves to the East.", 5, 2, None, None)
-    room2 = Room("You are at a split in the cave network and are unable to continue north. You may go East or West deeper into the cave \n or you can go south back towards the exit.", None, 3, 0, 1)
-    room3 = Room("You are in a room. There is a passage to the North and West.", 5, None, None, 2)
-    room4 = Room("You are in a room. There is a passage to the South.", None, None, 1, None)
-    room5 = Room("You are in a room. There is a passage to the South.", None, None, 3, None)
+    room0 = Room("You find yourself in a dimly lit cave. The walls are damp and the air is musty. To the south, you \n"
+                 "see a large metal door flanked by torches. To the north, the cave extends deeper into darkness. \n"
+                 "The only other option is to explore the damp cave walls to your east and west.", 2, None, None, None)
+    room1 = Room("As you enter the room, your eyes adjust to the flickering light of several torches mounted on \n"
+                 "the walls. The room is filled with rough cut tables and overturned chairs, suggesting that it was \n"
+                 "once a dining area. A pungent odor permeates the air. You notice a door to the north and can \n"
+                 "return to the split in the caves by heading east.", 4, 2, None, None)
+    room2 = Room("You come to a fork in the cave network. The path to the north is blocked, so you can either \n"
+                 "continue east or west deeper into the cave. Alternatively, you can head back south towards \n"
+                 "the exit.", None, 3, 0, 1)
+    room3 = Room("You enter a small chamber with rough-hewn walls. The flickering torches on the walls barely \n"
+                 "illuminate the area, leaving much of it shrouded in shadow. You see two passages leading out \n"
+                 "of the room to the north and west.", 5, None, None, 2)
+    room4 = Room("The door leads into a small chamber. The air is damp and musty, and the silence is broken only \n"
+                 "by the sound of water droplets hitting the ground. A passage to the south leads back out into the \n"
+                 "foul smelling room.", None, None, 1, None)
+    room5 = Room("As you enter the room, you're met with a cold gust of air. The walls are rough and jagged, and the \n"
+                 "torches flicker dimly, casting deep shadows across the room. The only exit is a narrow passage to \n"
+                 "the south.", None, None, 3, None)
 
     """Appending rooms to our list"""
 
@@ -38,40 +51,42 @@ def main():
 
     """Setting starting room"""
 
-    current_room = room_list[0]
+    current_room = 0
 
     """Creating while function to run our game, with if statements to handle player movement between rooms."""
 
     while not done:
-        if current_room == room_list[0]:
+
+        """With each If/else statement is a check on if the rooms cardinal value is true, then it will set the 
+        current_ room to that value."""
+
+        if current_room == 0:
             print()
             print(room_list[0].description)
             user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
-            # if user_input.casefold() == "go n" or user_input.casefold() == "go north":
-            #     next_room = room_list[0].north
-            #     current_room = next_room
-            # if user_input.casefold() == "go w" or user_input.casefold() == str("go west"):
-            #     print("You can not go that way.")
-            # if user_input.casefold() == "go s" or user_input.casefold() == str("go south"):
-            #     print("You have exited the cave")
-            #     done = True
+
             if user_input.casefold() == "go n" or user_input.casefold() == "go north":
-                if current_room.north:
-                    current_room = current_room.north
+                if room_list[0].north:
+                    current_room = room_list[0].north
                 else:
                     print("You can not go that way.")
+
             elif user_input.casefold() == "go w" or user_input.casefold() == "go west":
-                if current_room.west:
-                    current_room = current_room.west
+                if room_list[0].west:
+                    current_room = room_list[0].west
                 else:
                     print("You can not go that way.")
+
             elif user_input.casefold() == "go e" or user_input.casefold() == "go east":
-                if current_room.east:
-                    current_room = current_room.east
+                if room_list[0].east:
+                    current_room = room_list[0].east
                 else:
                     print("You can not go that way.")
+
             elif user_input.casefold() == "go s" or user_input.casefold() == "go south":
                 print("You have exited the cave.")
+                done = True
+            elif user_input.casefold() == "quit":
                 done = True
             else:
                 print("I don't understand your input")
@@ -81,25 +96,27 @@ def main():
             print(room_list[1].description)
             user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
             if user_input.casefold() == "go n" or user_input.casefold() == "go north":
-                if current_room.north:
-                    current_room = current_room.north
+                if room_list[1].north:
+                    current_room = room_list[1].north
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go w" or user_input.casefold() == "go west":
-                if current_room.west:
-                    current_room = current_room.west
+                if room_list[1].west:
+                    current_room = room_list[1].west
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go s" or user_input.casefold() == "go south":
-                if current_room.south:
-                    current_room = current_room.south
+                if room_list[1].south:
+                    current_room = room_list[1].south
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go e" or user_input.casefold() == "go east":
-                if current_room.east:
-                    current_room = current_room.east
+                if room_list[1].east:
+                    current_room = room_list[1].east
                 else:
                     print("You can not go that way.")
+            elif user_input.casefold() == "quit":
+                done = True
             else:
                 print("I don't understand your input")
 
@@ -108,25 +125,27 @@ def main():
             print(room_list[2].description)
             user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
             if user_input.casefold() == "go n" or user_input.casefold() == "go north":
-                if current_room.north:
-                    current_room = current_room.north
+                if room_list[2].north:
+                    current_room = room_list[2].north
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go w" or user_input.casefold() == "go west":
-                if current_room.west:
-                    current_room = current_room.west
+                if room_list[2].west:
+                    current_room = room_list[2].west
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go s" or user_input.casefold() == "go south":
-                if current_room.south:
-                    current_room = current_room.south
+                if room_list[2].south:
+                    current_room = room_list[2].south
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go e" or user_input.casefold() == "go east":
-                if current_room.east:
-                    current_room = current_room.east
+                if room_list[2].east:
+                    current_room = room_list[2].east
                 else:
                     print("You can not go that way.")
+            elif user_input.casefold() == "quit":
+                done = True
             else:
                 print("I don't understand your input")
         if current_room == 3:
@@ -134,25 +153,27 @@ def main():
             print(room_list[3].description)
             user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
             if user_input.casefold() == "go n" or user_input.casefold() == "go north":
-                if current_room.north:
-                    current_room = current_room.north
+                if room_list[3].north:
+                    current_room = room_list[3].north
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go w" or user_input.casefold() == "go west":
-                if current_room.west:
-                    current_room = current_room.west
+                if room_list[3].west:
+                    current_room = room_list[3].west
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go s" or user_input.casefold() == "go south":
-                if current_room.south:
-                    current_room = current_room.south
+                if room_list[3].south:
+                    current_room = room_list[3].south
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go e" or user_input.casefold() == "go east":
-                if current_room.east:
-                    current_room = current_room.east
+                if room_list[3].east:
+                    current_room = room_list[3].east
                 else:
                     print("You can not go that way.")
+            elif user_input.casefold() == "quit":
+                done = True
             else:
                 print("I don't understand your input")
 
@@ -161,25 +182,27 @@ def main():
             print(room_list[4].description)
             user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
             if user_input.casefold() == "go n" or user_input.casefold() == "go north":
-                if current_room.north:
-                    current_room = current_room.north
+                if room_list[4].north:
+                    current_room = room_list[4].north
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go w" or user_input.casefold() == "go west":
-                if current_room.west:
-                    current_room = current_room.west
+                if room_list[4].west:
+                    current_room = room_list[4].west
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go s" or user_input.casefold() == "go south":
-                if current_room.south:
-                    current_room = current_room.south
+                if room_list[4].south:
+                    current_room = room_list[4].south
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go e" or user_input.casefold() == "go east":
-                if current_room.east:
-                    current_room = current_room.east
+                if room_list[4].east:
+                    current_room = room_list[4].east
                 else:
                     print("You can not go that way.")
+            elif user_input.casefold() == "quit":
+                done = True
             else:
                 print("I don't understand your input")
 
@@ -188,25 +211,27 @@ def main():
             print(room_list[5].description)
             user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
             if user_input.casefold() == "go n" or user_input.casefold() == "go north":
-                if current_room.north:
-                    current_room = current_room.north
+                if room_list[5].north:
+                    current_room = room_list[5].north
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go w" or user_input.casefold() == "go west":
-                if current_room.west:
-                    current_room = current_room.west
+                if room_list[5].west:
+                    current_room = room_list[5].west
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go s" or user_input.casefold() == "go south":
-                if current_room.south:
-                    current_room = current_room.south
+                if room_list[5].south:
+                    current_room = room_list[5].south
                 else:
                     print("You can not go that way.")
             elif user_input.casefold() == "go e" or user_input.casefold() == "go east":
-                if current_room.east:
-                    current_room = current_room.east
+                if room_list[5].east:
+                    current_room = room_list[5].east
                 else:
                     print("You can not go that way.")
+            elif user_input.casefold() == "quit":
+                done = True
             else:
                 print("I don't understand your input")
 
