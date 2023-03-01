@@ -57,8 +57,11 @@ def main():
 
     while not done:
 
+        print("You have entered a long rumored goblin cave. You can leave out the door to the south, or you can \n"
+              " adventure deeper. You can quit at any time by typing \"quit\"")
+
         """With each If/else statement is a check on if the rooms cardinal value is true, then it will set the 
-        current_ room to that value."""
+        current_ room to that value. Our starting room_0 description and input below"""
 
         if current_room == 0:
             print()
@@ -91,6 +94,8 @@ def main():
             else:
                 print("I don't understand your input")
 
+        """room_1 description and player input"""
+
         if current_room == 1:
             print()
             print(room_list[1].description)
@@ -120,6 +125,8 @@ def main():
             else:
                 print("I don't understand your input")
 
+        """room_2 description and player input below"""
+
         if current_room == 2:
             print()
             print(room_list[2].description)
@@ -148,6 +155,9 @@ def main():
                 done = True
             else:
                 print("I don't understand your input")
+
+        """room_3 description and player input below"""
+
         if current_room == 3:
             print()
             print(room_list[3].description)
@@ -177,6 +187,8 @@ def main():
             else:
                 print("I don't understand your input")
 
+        """room_4 description and player input below"""
+
         if current_room == 4:
             print()
             print(room_list[4].description)
@@ -205,6 +217,8 @@ def main():
                 done = True
             else:
                 print("I don't understand your input")
+
+        """room_5 description and player input below"""
 
         if current_room == 5:
             print()
