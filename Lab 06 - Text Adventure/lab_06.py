@@ -20,25 +20,27 @@ def main():
 
     """Creating rooms with attributes"""
 
-    room0 = Room("You find yourself in a dimly lit cave. The walls are damp and the air is musty. To the south, you \n"
-                 "see a large metal door flanked by torches. To the north, the cave extends deeper into darkness. \n"
-                 "The only other option is to explore the damp cave walls to your east and west.", 2, None, None, None)
-    room1 = Room("As you enter the room, your eyes adjust to the flickering light of several torches mounted on \n"
-                 "the walls. The room is filled with rough cut tables and overturned chairs, suggesting that it was \n"
-                 "once a dining area. A pungent odor permeates the air. You notice a door to the north and can \n"
-                 "return to the split in the caves by heading east.", 4, 2, None, None)
-    room2 = Room("You come to a fork in the cave network. The path to the north is blocked, so you can either \n"
-                 "continue east or west deeper into the cave. Alternatively, you can head back south towards \n"
-                 "the exit.", None, 3, 0, 1)
-    room3 = Room("You enter a small chamber with rough-hewn walls. The flickering torches on the walls barely \n"
-                 "illuminate the area, leaving much of it shrouded in shadow. You see two passages leading out \n"
-                 "of the room to the north and west.", 5, None, None, 2)
-    room4 = Room("The door leads into a small chamber. The air is damp and musty, and the silence is broken only \n"
-                 "by the sound of water droplets hitting the ground. A passage to the south leads back out into the \n"
-                 "foul smelling room.", None, None, 1, None)
-    room5 = Room("As you enter the room, you're met with a cold gust of air. The walls are rough and jagged, and the \n"
-                 "torches flicker dimly, casting deep shadows across the room. The only exit is a narrow passage to \n"
-                 "the south.", None, None, 3, None)
+    room0 = Room("You are in a cozy bedroom, where a neatly made bed is the centerpiece. A small desk and chair sit "
+                 "in the corner, and a lamp casts a warm glow on the room. To the east is a door that leads to "
+                 "the South Hall.", None, 1, None, None)
+    room1 = Room("You find yourself in a long hallway, lined with paintings and family photographs. To the west is "
+                 "Bedroom 2, while to the north, the hall leads to the North Hall. To the east, you see the entrance "
+                 "to the elegant dining room, and to the south, a door leads outside.", 4, 2, None, 0)
+    room2 = Room("You step into a grand dining room, with a large table surrounded by chairs. The walls are adorned "
+                 "with ornate patterns, and a chandelier hangs from the ceiling. To the west is the entrance to "
+                 "the South Hall, and to the north, you see the entrance to the kitchen.", 5, None, None, 1)
+    room3 = Room("You enter a spacious bedroom, with a four-poster bed dominating the room. The walls are painted a "
+                 "calming blue, and a large wardrobe sits in the corner. To the east is the entrance to the "
+                 "North Hall.", None, 4, None, None)
+    room4 = Room("You find yourself in a spacious hallway, with intricate designs etched into the walls. To the west "
+                 "is Bedroom 1, while to the north, a door leads to the Balcony, and to the east, the hall leads "
+                 "to the Kitchen.", 6, 5, 1, 3)
+    room5 = Room("You step into a well-lit kitchen, with pots and pans hanging from the walls. A large stove sits in "
+                 "the corner, and a table is set up for preparing meals. To the west is the entrance to the "
+                 "North Hall, and to the south, you see the entrance to the Dining Room.", None, None, 2, 4)
+    room6 = Room("You step onto a balcony, with a breathtaking view of the surrounding countryside. The air is crisp "
+                 "and fresh, and a gentle breeze rustles your hair. To the south is the entrance to the "
+                 "North Hall.", None, None, 4, None)
 
     """Appending rooms to our list"""
 
@@ -48,6 +50,7 @@ def main():
     room_list.append(room3)
     room_list.append(room4)
     room_list.append(room5)
+    room_list.append(room6)
 
     """Setting starting room"""
 
@@ -57,16 +60,14 @@ def main():
 
     while not done:
 
-        print("You have entered a long rumored goblin cave. You can leave out the door to the south, or you can \n"
-              " adventure deeper. You can quit at any time by typing \"quit\"")
-
         """With each If/else statement is a check on if the rooms cardinal value is true, then it will set the 
         current_ room to that value. Our starting room_0 description and input below"""
 
         if current_room == 0:
             print()
             print(room_list[0].description)
-            user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
+            user_input = input("What would you like to do? You may say \"go\" with a direction to change areas "
+                               "or type quit to exit.")
 
             if user_input.casefold() == "go n" or user_input.casefold() == "go north":
                 if room_list[0].north:
@@ -249,5 +250,37 @@ def main():
             else:
                 print("I don't understand your input")
 
+        """room_6 description and player input below"""
 
-main()
+        if current_room == 6:
+            print()
+            print(room_list[6].description)
+            user_input = input("What would you like to do? You may say \"go\" with a direction to change areas.")
+            if user_input.casefold() == "go n" or user_input.casefold() == "go north":
+                if room_list[6].north:
+                    current_room = room_list[6].north
+                else:
+                    print("You can not go that way.")
+            elif user_input.casefold() == "go w" or user_input.casefold() == "go west":
+                if room_list[5].west:
+                    current_room = room_list[6].west
+                else:
+                    print("You can not go that way.")
+            elif user_input.casefold() == "go s" or user_input.casefold() == "go south":
+                if room_list[5].south:
+                    current_room = room_list[6].south
+                else:
+                    print("You can not go that way.")
+            elif user_input.casefold() == "go e" or user_input.casefold() == "go east":
+                if room_list[5].east:
+                    current_room = room_list[6].east
+                else:
+                    print("You can not go that way.")
+            elif user_input.casefold() == "quit":
+                done = True
+            else:
+                print("I don't understand your input")
+
+
+if __name__ == "__main__":
+    main()
