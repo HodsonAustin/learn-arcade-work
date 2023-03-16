@@ -1,13 +1,8 @@
 import arcade
-from playsound import playsound
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 MOVEMENT_SPEED = 3
-
-class Boundary(arcade.Sound):
-    def __init__(self, file_name):
-        super().__init__(file_name)
 
 class Bubble:
     def __init__(self, position_x, position_y, change_x, change_y, radius, color):
