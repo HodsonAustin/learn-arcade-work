@@ -1,5 +1,5 @@
 import arcade
-import
+
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 MOVEMENT_SPEED = 3
