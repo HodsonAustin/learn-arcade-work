@@ -1,4 +1,5 @@
 import arcade
+from playsound import playsound
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -125,9 +126,15 @@ class MyGame(arcade.Window):
         self.bubble.update()
         self.cloud.update()
 
-    # def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
-    #     if button == arcade.MOUSE_BUTTON_LEFT:
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+        if button == arcade.MOUSE_BUTTON_LEFT:
+            playsound('/Users/yello/dev/boundary.wav')
 
+    def collision_with_edge(self):
+        if self.bubble.position_x > SCREEN_WIDTH - self.bubble.radius:
+            playsound('/Users/yello/dev/boundary.wav')
+        elif self.cloud.position_x > SCREEN_WIDTH - self.cloud.radius:
+            playsound('/Users/yello/dev/boundary.wav')
 
     def on_key_press(self, key, modifiers):
         """ Called whenever the user presses a key. """
