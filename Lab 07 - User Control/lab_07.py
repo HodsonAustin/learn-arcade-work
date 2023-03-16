@@ -1,8 +1,11 @@
 import arcade
+from playsound import playsound
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 MOVEMENT_SPEED = 3
+
+""" Creating a class for our bubble"""
 
 class Bubble:
     def __init__(self, position_x, position_y, change_x, change_y, radius, color):
@@ -41,6 +44,7 @@ class Bubble:
         if self.position_y > SCREEN_HEIGHT - self.radius:
             self.position_y = SCREEN_HEIGHT - self.radius
 
+""" Creating a class for our cloud"""
 class Cloud:
     def __init__(self, position_x, position_y, change_x, change_y, radius, color):
 
@@ -81,6 +85,7 @@ class Cloud:
         if self.position_y > SCREEN_HEIGHT - self.radius:
             self.position_y = SCREEN_HEIGHT - self.radius
 
+"""Creating a class for our game"""
 
 class MyGame(arcade.Window):
 
@@ -121,6 +126,7 @@ class MyGame(arcade.Window):
         self.bubble.update()
         self.cloud.update()
 
+    """ Added sound for when clicking"""
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         if button == arcade.MOUSE_BUTTON_LEFT:
             playsound('/Users/yello/dev/boundary.wav')
@@ -129,6 +135,10 @@ class MyGame(arcade.Window):
         if self.bubble.position_x > SCREEN_WIDTH - self.bubble.radius:
             playsound('/Users/yello/dev/boundary.wav')
         elif self.cloud.position_x > SCREEN_WIDTH - self.cloud.radius:
+            playsound('/Users/yello/dev/boundary.wav')
+        elif self.bubble.position_x < SCREEN_WIDTH + self.bubble.radius:
+            playsound('/Users/yello/dev/boundary.wav')
+        elif self.cloud.position_x < SCREEN_WIDTH + self.cloud.radius:
             playsound('/Users/yello/dev/boundary.wav')
 
     def on_key_press(self, key, modifiers):
@@ -155,7 +165,6 @@ class MyGame(arcade.Window):
         Happens approximately 60 times per second."""
         self.cloud.position_x = x
         self.cloud.position_y = y
-
 
 def main():
     window = MyGame(640, 480, "Drawing Example")
