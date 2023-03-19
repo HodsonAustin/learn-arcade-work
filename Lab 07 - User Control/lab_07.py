@@ -135,6 +135,7 @@ class MyGame(arcade.Window):
     def update(self, delta_time):
         self.bubble.update()
         self.cloud.update()
+        self.collision_with_edge()
 
     """ Added sound for when clicking"""
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
@@ -142,22 +143,18 @@ class MyGame(arcade.Window):
             arcade.play_sound(self.laser_sound)
 
     def collision_with_edge(self):
-        if self.bubble.position_x >= SCREEN_WIDTH - self.bubble.radius:
-            arcade.play_sound(self.border_sound)
-        elif self.cloud.position_x >= SCREEN_WIDTH - self.cloud.radius:
-            arcade.play_sound(self.border_sound)
-        elif self.bubble.position_x <= 0 + self.bubble.radius:
-            arcade.play_sound(self.border_sound)
-        elif self.cloud.position_x <= 0 + self.cloud.radius:
-            arcade.play_sound(self.border_sound)
-        elif self.bubble.position_y >= SCREEN_HEIGHT - self.bubble.radius:
-            arcade.play_sound(self.border_sound)
-        elif self.cloud.position_y >= SCREEN_HEIGHT - self.cloud.radius:
-            arcade.play_sound(self.border_sound)
-        elif self.bubble.position_y <= 0 + self.bubble.radius:
-            arcade.play_sound(self.border_sound)
-        elif self.cloud.position_y <= 0 + self.cloud.radius:
-            arcade.play_sound(self.border_sound)
+        if self.bubble.position_x >= SCREEN_WIDTH - self.bubble.radius or self.bubble.position_x <= self.bubble.radius:
+            if not self.border_sound_player or not self.border_sound_player.playing:
+                arcade.play_sound(self.border_sound)
+        if self.bubble.position_y >= SCREEN_HEIGHT - self.bubble.radius or self.bubble.position_y <= self.bubble.radius:
+            if not self.border_sound_player or not self.border_sound_player.playing:
+                arcade.play_sound(self.border_sound)
+        if self.cloud.position_x >= SCREEN_WIDTH - self.cloud.radius or self.cloud.position_x <= self.cloud.radius:
+            if not self.border_sound_player or not self.border_sound_player.playing:
+                arcade.play_sound(self.border_sound)
+        if self.cloud.position_y >= SCREEN_HEIGHT - self.cloud.radius or self.cloud.position_y <= self.cloud.radius:
+            if not self.border_sound_player or not self.border_sound_player.playing:
+                arcade.play_sound(self.border_sound)
 
     def on_key_press(self, key, modifiers):
         """ Called whenever the user presses a key. """
