@@ -1,11 +1,11 @@
 import arcade
-from playsound import playsound
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 MOVEMENT_SPEED = 3
 
 """ Creating a class for our bubble"""
+
 
 class Bubble:
     def __init__(self, position_x, position_y, change_x, change_y, radius, color):
@@ -24,7 +24,8 @@ class Bubble:
 
         arcade.draw_circle_filled(self.position_x, self.position_y, self.radius, self.color)
         arcade.draw_circle_outline(self.position_x, self.position_y, self.radius, arcade.csscolor.BLACK, 3)
-        arcade.draw_circle_outline(self.position_x + 7, self.position_y + 10, self.radius - 20, arcade.csscolor.BLACK, 2)
+        arcade.draw_circle_outline(self.position_x + 7, self.position_y + 10, self.radius - 20,
+                                   arcade.csscolor.BLACK, 2)
 
     def update(self):
         # Move the ball
@@ -44,7 +45,10 @@ class Bubble:
         if self.position_y > SCREEN_HEIGHT - self.radius:
             self.position_y = SCREEN_HEIGHT - self.radius
 
+
 """ Creating a class for our cloud"""
+
+
 class Cloud:
     def __init__(self, position_x, position_y, change_x, change_y, radius, color):
 
@@ -85,7 +89,9 @@ class Cloud:
         if self.position_y > SCREEN_HEIGHT - self.radius:
             self.position_y = SCREEN_HEIGHT - self.radius
 
+
 """Creating a class for our game"""
+
 
 class MyGame(arcade.Window):
 
@@ -106,6 +112,9 @@ class MyGame(arcade.Window):
         # Create our cloud
         self.cloud = Cloud(100, 50, 0, 0, 40, arcade.color.WHITE)
 
+        self.laser_sound = arcade.load_sound("/users/yello/dev/laser.wav")
+        self.border_sound = arcade.load_sound("/users/yello/dev/boundary.wav")
+
     def on_draw(self):
         """ Called whenever we need to draw the window. """
         arcade.start_render()
@@ -120,8 +129,6 @@ class MyGame(arcade.Window):
         # Draw cloud
         self.cloud.draw()
 
-
-
     def update(self, delta_time):
         self.bubble.update()
         self.cloud.update()
@@ -129,17 +136,25 @@ class MyGame(arcade.Window):
     """ Added sound for when clicking"""
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         if button == arcade.MOUSE_BUTTON_LEFT:
-            playsound('/Users/yello/dev/boundary.wav')
+            arcade.play_sound(self.laser_sound)
 
     def collision_with_edge(self):
-        if self.bubble.position_x > SCREEN_WIDTH - self.bubble.radius:
-            playsound('/Users/yello/dev/boundary.wav')
-        elif self.cloud.position_x > SCREEN_WIDTH - self.cloud.radius:
-            playsound('/Users/yello/dev/boundary.wav')
-        elif self.bubble.position_x < SCREEN_WIDTH + self.bubble.radius:
-            playsound('/Users/yello/dev/boundary.wav')
-        elif self.cloud.position_x < SCREEN_WIDTH + self.cloud.radius:
-            playsound('/Users/yello/dev/boundary.wav')
+        if self.bubble.position_x >= SCREEN_WIDTH - self.bubble.radius:
+            arcade.play_sound(self.border_sound)
+        elif self.cloud.position_x >= SCREEN_WIDTH - self.cloud.radius:
+            arcade.play_sound(self.border_sound)
+        elif self.bubble.position_x <= 0 + self.bubble.radius:
+            arcade.play_sound(self.border_sound)
+        elif self.cloud.position_x <= 0 + self.cloud.radius:
+            arcade.play_sound(self.border_sound)
+        elif self.bubble.position_y >= SCREEN_HEIGHT - self.bubble.radius:
+            arcade.play_sound(self.border_sound)
+        elif self.cloud.position_y >= SCREEN_HEIGHT - self.cloud.radius:
+            arcade.play_sound(self.border_sound)
+        elif self.bubble.position_y <= 0 + self.bubble.radius:
+            arcade.play_sound(self.border_sound)
+        elif self.cloud.position_y <= 0 + self.cloud.radius:
+            arcade.play_sound(self.border_sound)
 
     def on_key_press(self, key, modifiers):
         """ Called whenever the user presses a key. """
@@ -159,12 +174,12 @@ class MyGame(arcade.Window):
         elif key == arcade.key.UP or key == arcade.key.DOWN:
             self.bubble.change_y = 0
 
-
     def on_mouse_motion(self, x, y, dx, dy):
         """ Called to update our objects.
         Happens approximately 60 times per second."""
         self.cloud.position_x = x
         self.cloud.position_y = y
+
 
 def main():
     window = MyGame(640, 480, "Drawing Example")
