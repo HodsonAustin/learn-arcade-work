@@ -115,6 +115,9 @@ class MyGame(arcade.Window):
         self.laser_sound = arcade.load_sound("/users/yello/dev/laser.wav")
         self.border_sound = arcade.load_sound("/users/yello/dev/boundary.wav")
 
+        self.laser_sound_player = None
+        self.border_sound_player = None
+
     def on_draw(self):
         """ Called whenever we need to draw the window. """
         arcade.start_render()
@@ -135,7 +138,7 @@ class MyGame(arcade.Window):
 
     """ Added sound for when clicking"""
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
-        if button == arcade.MOUSE_BUTTON_LEFT:
+        if not self.laser_sound_player or not self.laser_sound_player.playing and button == arcade.MOUSE_BUTTON_LEFT:
             arcade.play_sound(self.laser_sound)
 
     def collision_with_edge(self):
