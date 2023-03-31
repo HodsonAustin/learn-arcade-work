@@ -267,7 +267,7 @@ class MyGame(arcade.Window):
         super().__init__(width, height, title)
 
         # Sound variables
-        self.coin_collect = arcade.load_sound("/users/yello/dev/silver.wav")
+        self.coin_collect = arcade.load_sound("/users/yello/dev/learn-arcade-work/silver.wav")
 
         # Sprite lists
         self.current_room = 0

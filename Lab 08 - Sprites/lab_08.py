@@ -190,8 +190,6 @@ class MyGame(arcade.Window):
             Rat.center_x = 0
 
 
-
-
 def main():
     """ Main method """
     window = MyGame()
