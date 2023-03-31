@@ -15,8 +15,9 @@ SCREEN_WIDTH = SPRITE_SIZE * 14
 SCREEN_HEIGHT = SPRITE_SIZE * 10
 SCREEN_TITLE = "Hitman game"
 
-MOVEMENT_SPEED = 5
+MOVEMENT_SPEED = 3
 NUMBER_OF_COINS = 10
+
 
 class Room:
     """
@@ -28,7 +29,7 @@ class Room:
         self.wall_list = None
         self.coin_list = None
 
-        # This holds the background images. If you don't want changing
+        # This holds the background images. If you don't want to be changing
         # background images, you can delete this part.
         self.background = None
 
@@ -36,8 +37,6 @@ class Room:
 def setup_room_1():
     """
     Create and return room 1.
-    If your program gets large, you may want to separate this into different
-    files.
     """
     room = Room()
 
@@ -151,8 +150,7 @@ def setup_room_2():
         # Loop for boxes going across
         for y in range(90, SCREEN_HEIGHT - 60, 75):
             if y % 2 == 0:
-                wall = arcade.Sprite("/users/yello/dev/sprites/Tiles/tile_367.png",
-                                 SPRITE_SCALING)
+                wall = arcade.Sprite("/users/yello/dev/sprites/Tiles/tile_367.png", SPRITE_SCALING)
                 wall.center_x = x
                 wall.center_y = y
                 room.wall_list.append(wall)
@@ -186,6 +184,7 @@ def setup_room_2():
 
     return room
 
+
 def setup_room_3():
     """
     Create and return room 3.
@@ -203,7 +202,7 @@ def setup_room_3():
     for y in (BOX_BUFFER, SCREEN_HEIGHT):
         # Loop for each box going across
         for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
-            if (x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14 or y != SCREEN_HEIGHT or y == BOX_BUFFER):
+            if x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14 or y != SCREEN_HEIGHT or y == BOX_BUFFER:
                 wall = arcade.Sprite("/users/yello/dev/sprites/Tiles/tile_129.png", SPRITE_SCALING)
                 wall.left = x
                 wall.top = y
@@ -223,8 +222,7 @@ def setup_room_3():
         # Loop for boxes going across
         for y in range(90, SCREEN_HEIGHT - 90, 75):
             if y % 2 == 0 and x % 2 == 0:
-                wall = arcade.Sprite("/users/yello/dev/sprites/Tiles/tile_367.png",
-                                 SPRITE_SCALING)
+                wall = arcade.Sprite("/users/yello/dev/sprites/Tiles/tile_367.png", SPRITE_SCALING)
                 wall.center_x = x
                 wall.center_y = y
                 room.wall_list.append(wall)
@@ -257,6 +255,7 @@ def setup_room_3():
     room.background = arcade.load_texture("/users/yello/dev/sprites/Tiles/tile_01.png")
 
     return room
+
 
 class MyGame(arcade.Window):
     """ Main application class. """
