@@ -63,7 +63,7 @@ def setup_room_1():
         for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
             # Skip making a block 8 and 9 blocks up on the right side
             if (y != BOX_BUFFER * 9 and y != BOX_BUFFER * 8) or x == 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_129.png",
+                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_129.png",
                                      SPRITE_SCALING)
                 wall.left = x
                 wall.bottom = y
@@ -73,7 +73,7 @@ def setup_room_1():
     for x in (250, SCREEN_WIDTH - 250):
         # Loop for boxes going across
         for y in range(60, SCREEN_HEIGHT - 60, 90):
-            wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_367.png",
+            wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_367.png",
                                  SPRITE_SCALING)
             wall.center_x = x
             wall.center_y = y
@@ -106,7 +106,7 @@ def setup_room_1():
         room.coin_list.append(coin)
 
     # Load the background image for this level.
-    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_09.png")
+    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/tile_09.png")
 
     return room
 
@@ -129,7 +129,7 @@ def setup_room_2():
         # Loop for each box going across
         for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
             if (x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14) or y != 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_237.png", 1.0)
+                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_237.png", 1.0)
                 wall.left = x
                 wall.bottom = y
                 room.wall_list.append(wall)
@@ -140,7 +140,7 @@ def setup_room_2():
         for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
             # Skip making a block 4 and 5 blocks up
             if (y != BOX_BUFFER * 8 and y != BOX_BUFFER * 9) or x != 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_129.png", SPRITE_SCALING)
+                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_129.png", SPRITE_SCALING)
                 wall.left = x
                 wall.bottom = y
                 room.wall_list.append(wall)
@@ -150,7 +150,7 @@ def setup_room_2():
         # Loop for boxes going across
         for y in range(90, SCREEN_HEIGHT - 60, 75):
             if y % 2 == 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_367.png", SPRITE_SCALING)
+                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_367.png", SPRITE_SCALING)
                 wall.center_x = x
                 wall.center_y = y
                 room.wall_list.append(wall)
@@ -180,7 +180,7 @@ def setup_room_2():
         # Add the coin to the lists
         room.coin_list.append(coin)
 
-    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_96.png")
+    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/tile_96.png")
 
     return room
 
@@ -203,7 +203,7 @@ def setup_room_3():
         # Loop for each box going across
         for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
             if x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14 or y != SCREEN_HEIGHT or y == BOX_BUFFER:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_129.png", SPRITE_SCALING)
+                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_129.png", SPRITE_SCALING)
                 wall.left = x
                 wall.top = y
                 room.wall_list.append(wall)
@@ -212,7 +212,7 @@ def setup_room_3():
     for x in (0, SCREEN_WIDTH - BOX_BUFFER):
         # Loop for each box going across
         for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
-            wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_237.png", 1.0)
+            wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_237.png", 1.0)
             wall.left = x
             wall.bottom = y
             room.wall_list.append(wall)
@@ -222,7 +222,7 @@ def setup_room_3():
         # Loop for boxes going across
         for y in range(90, SCREEN_HEIGHT - 90, 75):
             if y % 2 == 0 and x % 2 == 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_367.png", SPRITE_SCALING)
+                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_367.png", SPRITE_SCALING)
                 wall.center_x = x
                 wall.center_y = y
                 room.wall_list.append(wall)
@@ -252,7 +252,7 @@ def setup_room_3():
         # Add the coin to the lists
         room.coin_list.append(coin)
 
-    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/Tiles/tile_01.png")
+    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/tile_01.png")
 
     return room
 
