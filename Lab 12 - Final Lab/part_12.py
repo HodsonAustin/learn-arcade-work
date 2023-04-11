@@ -22,6 +22,7 @@ coin_bing = arcade.load_sound("silver.wav")
 reload = arcade.load_sound("reload.mp3")
 shot = arcade.load_sound("shot.wav")
 dryfire = arcade.load_sound("dryfire.wav")
+collecting_ammo = arcade.load_sound("collecting_ammo.wav")
 
 
 class MyGame(arcade.Window):
@@ -47,6 +48,8 @@ class MyGame(arcade.Window):
         self.score = 0
         self.ammunition = 8
         self.magazine = 3
+        self.health = 100
+
 
         # Track the current state of what key is pressed
         self.left_pressed = False
@@ -100,6 +103,9 @@ class MyGame(arcade.Window):
         self.rooms[self.current_room].wall_list.draw()
         self.rooms[self.current_room].coin_list.draw()
         self.rooms[self.current_room].bullet_list.draw()
+        self.rooms[self.current_room].ammo_box_list.draw()
+        self.rooms[self.current_room].enemy_list.draw()
+
 
         # If you have coins or monsters, then copy and modify the line
         # above for each list.
@@ -108,9 +114,11 @@ class MyGame(arcade.Window):
 
         # Put the text on the screen.
         output = f"Score: {self.score}"
-        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
+        arcade.draw_text(output, 40, 40, arcade.color.WHITE, 14)
         ammunition = f"Ammo: {self.ammunition}/{self.magazine}"
-        arcade.draw_text(ammunition, SCREEN_WIDTH - 100, 20, arcade.color.WHITE, 14)
+        arcade.draw_text(ammunition, SCREEN_WIDTH - 125, 40, arcade.color.WHITE, 14)
+        health = f"Health: {self.health}/100"
+        arcade.draw_text(health, 40, SCREEN_HEIGHT - 75, arcade.color.RED, 20)
 
     def update_player_speed(self):
 
@@ -147,10 +155,12 @@ class MyGame(arcade.Window):
             self.right_pressed = True
             self.update_player_speed()
         elif key == arcade.key.R:
-            if self.magazine >= 1:
+            if self.magazine >= 1 and self.ammunition <= 7:
                 self.ammunition = 8
                 self.magazine -= 1
                 arcade.play_sound(reload, .2)
+            else:
+                pass
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -225,6 +235,8 @@ class MyGame(arcade.Window):
         # Generate a list of all sprites that collided with the player.
         coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
                                                               self.rooms[self.current_room].coin_list)
+        ammo_box_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
+                                                                 self.rooms[self.current_room].ammo_box_list)
         # Loop through each bullet
         for bullet in self.rooms[self.current_room].bullet_list:
             bullet_hit_list = arcade.check_for_collision_with_list(bullet,
@@ -235,8 +247,13 @@ class MyGame(arcade.Window):
         # Loop through each colliding sprite, remove it, and add to the score.
         for coin in coins_hit_list:
             coin.remove_from_sprite_lists()
-            arcade.play_sound(self.coin_collect, .1)
+            arcade.play_sound(coin_bing, .1)
             self.score += 25
+
+        for ammo_box in ammo_box_hit_list:
+            ammo_box.remove_from_sprite_lists()
+            arcade.play_sound(collecting_ammo, .5)
+            self.magazine += 1
 
         # Do some logic here to figure out what room we are in, and if we need to go
         # to a different room.

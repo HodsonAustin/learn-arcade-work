@@ -15,6 +15,8 @@ SCREEN_TITLE = "Hitman game"
 MOVEMENT_SPEED = 5
 BULLET_SPEED = 10
 NUMBER_OF_COINS = 10
+NUMBER_OF_AMMO_BOX = 2
+NUMBER_OF_ENEMIES = 5
 
 
 class Room:
@@ -27,6 +29,8 @@ class Room:
         self.wall_list = None
         self.coin_list = None
         self.bullet_list = None
+        self.ammo_box_list = None
+        self.enemy_list = None
 
         # This holds the background images. If you don't want to be changing
         # background images, you can delete this part.
@@ -44,6 +48,8 @@ def setup_room_1():
     room.wall_list = arcade.SpriteList()
     room.coin_list = arcade.SpriteList()
     room.bullet_list = arcade.SpriteList()
+    room.ammo_box_list = arcade.SpriteList()
+    room.enemy_list = arcade.SpriteList()
 
     # -- Set up the walls
     # Create bottom and top row of boxes
@@ -105,6 +111,56 @@ def setup_room_1():
         # Add the coin to the lists
         room.coin_list.append(coin)
 
+    for i in range(NUMBER_OF_AMMO_BOX):
+        ammo_box = arcade.Sprite("ammo_box.png", 1.0)
+
+        # Boolean variable if we successfully placed the ammo_box
+        box_placed_successfully = False
+
+        # Keep trying until success
+        while not box_placed_successfully:
+            # Position the ammo_box
+            ammo_box.center_x = random.randrange(SCREEN_WIDTH)
+            ammo_box.center_y = random.randrange(SCREEN_HEIGHT)
+
+            # See if the ammo_box is hitting a wall
+            wall_hit_list = arcade.check_for_collision_with_list(ammo_box, room.wall_list)
+
+            # See if the ammo_box is hitting another coin
+            box_hit_list = arcade.check_for_collision_with_list(ammo_box, room.ammo_box_list)
+
+            if len(wall_hit_list) == 0 and len(box_hit_list) == 0:
+                # It is!
+                box_placed_successfully = True
+
+        # Add the ammo_box to the lists
+        room.ammo_box_list.append(ammo_box)
+
+    for i in range(NUMBER_OF_ENEMIES):
+        enemy = arcade.Sprite("zombie.png", SPRITE_SCALING)
+
+        # Boolean variable if we successfully placed the enemy
+        enemy_placed_successfully = False
+
+        # Keep trying until success
+        while not enemy_placed_successfully:
+            # Position the enemy
+            enemy.center_x = random.randrange(SCREEN_WIDTH)
+            enemy.center_y = random.randrange(SCREEN_HEIGHT)
+
+            # See if the enemy is hitting a wall
+            wall_hit_list = arcade.check_for_collision_with_list(enemy, room.wall_list)
+
+            # See if the ammo_box is hitting another coin
+            enemy_hit_list = arcade.check_for_collision_with_list(enemy, room.ammo_box_list)
+
+            if len(wall_hit_list) == 0 and len(enemy_hit_list) == 0:
+                # It is!
+                enemy_placed_successfully = True
+
+        # Add the ammo_box to the lists
+        room.enemy_list.append(enemy)
+
     # Load the background image for this level.
     room.background = arcade.load_texture("tile_09.png")
 
@@ -122,6 +178,8 @@ def setup_room_2():
     room.wall_list = arcade.SpriteList()
     room.coin_list = arcade.SpriteList()
     room.bullet_list = arcade.SpriteList()
+    room.ammo_box_list = arcade.SpriteList()
+    room.enemy_list = arcade.SpriteList()
 
     # -- Set up the walls
     # Create bottom and top row of boxes
@@ -180,6 +238,55 @@ def setup_room_2():
 
         # Add the coin to the lists
         room.coin_list.append(coin)
+    for i in range(NUMBER_OF_AMMO_BOX):
+        ammo_box = arcade.Sprite("ammo_box.png", 1.0)
+
+        # Boolean variable if we successfully placed the ammo_box
+        box_placed_successfully = False
+
+        # Keep trying until success
+        while not box_placed_successfully:
+            # Position the ammo_box
+            ammo_box.center_x = random.randrange(SCREEN_WIDTH)
+            ammo_box.center_y = random.randrange(SCREEN_HEIGHT)
+
+            # See if the ammo_box is hitting a wall
+            wall_hit_list = arcade.check_for_collision_with_list(ammo_box, room.wall_list)
+
+            # See if the ammo_box is hitting another coin
+            box_hit_list = arcade.check_for_collision_with_list(ammo_box, room.ammo_box_list)
+
+            if len(wall_hit_list) == 0 and len(box_hit_list) == 0:
+                # It is!
+                box_placed_successfully = True
+
+        # Add the ammo_box to the lists
+        room.ammo_box_list.append(ammo_box)
+
+    for i in range(NUMBER_OF_ENEMIES):
+        enemy = arcade.Sprite("zombie.png", SPRITE_SCALING)
+
+        # Boolean variable if we successfully placed the enemy
+        enemy_placed_successfully = False
+
+        # Keep trying until success
+        while not enemy_placed_successfully:
+            # Position the enemy
+            enemy.center_x = random.randrange(SCREEN_WIDTH)
+            enemy.center_y = random.randrange(SCREEN_HEIGHT)
+
+            # See if the enemy is hitting a wall
+            wall_hit_list = arcade.check_for_collision_with_list(enemy, room.wall_list)
+
+            # See if the ammo_box is hitting another coin
+            enemy_hit_list = arcade.check_for_collision_with_list(enemy, room.ammo_box_list)
+
+            if len(wall_hit_list) == 0 and len(enemy_hit_list) == 0:
+                # It is!
+                enemy_placed_successfully = True
+
+        # Add the ammo_box to the lists
+        room.enemy_list.append(enemy)
 
     room.background = arcade.load_texture("tile_96.png")
 
@@ -197,6 +304,8 @@ def setup_room_3():
     room.wall_list = arcade.SpriteList()
     room.coin_list = arcade.SpriteList()
     room.bullet_list = arcade.SpriteList()
+    room.ammo_box_list = arcade.SpriteList()
+    room.enemy_list = arcade.SpriteList()
 
     # -- Set up the walls
     # Create bottom and top row of boxes
@@ -253,6 +362,55 @@ def setup_room_3():
 
         # Add the coin to the lists
         room.coin_list.append(coin)
+    for i in range(NUMBER_OF_AMMO_BOX):
+        ammo_box = arcade.Sprite("ammo_box.png", 1.0)
+
+        # Boolean variable if we successfully placed the ammo_box
+        box_placed_successfully = False
+
+        # Keep trying until success
+        while not box_placed_successfully:
+            # Position the ammo_box
+            ammo_box.center_x = random.randrange(SCREEN_WIDTH)
+            ammo_box.center_y = random.randrange(SCREEN_HEIGHT)
+
+            # See if the ammo_box is hitting a wall
+            wall_hit_list = arcade.check_for_collision_with_list(ammo_box, room.wall_list)
+
+            # See if the ammo_box is hitting another coin
+            box_hit_list = arcade.check_for_collision_with_list(ammo_box, room.ammo_box_list)
+
+            if len(wall_hit_list) == 0 and len(box_hit_list) == 0:
+                # It is!
+                box_placed_successfully = True
+
+        # Add the ammo_box to the lists
+        room.ammo_box_list.append(ammo_box)
+
+    for i in range(NUMBER_OF_ENEMIES):
+        enemy = arcade.Sprite("zombie.png", SPRITE_SCALING)
+
+        # Boolean variable if we successfully placed the enemy
+        enemy_placed_successfully = False
+
+        # Keep trying until success
+        while not enemy_placed_successfully:
+            # Position the enemy
+            enemy.center_x = random.randrange(SCREEN_WIDTH)
+            enemy.center_y = random.randrange(SCREEN_HEIGHT)
+
+            # See if the enemy is hitting a wall
+            wall_hit_list = arcade.check_for_collision_with_list(enemy, room.wall_list)
+
+            # See if the ammo_box is hitting another coin
+            enemy_hit_list = arcade.check_for_collision_with_list(enemy, room.ammo_box_list)
+
+            if len(wall_hit_list) == 0 and len(enemy_hit_list) == 0:
+                # It is!
+                enemy_placed_successfully = True
+
+        # Add the ammo_box to the lists
+        room.enemy_list.append(enemy)
 
     room.background = arcade.load_texture("tile_01.png")
 
