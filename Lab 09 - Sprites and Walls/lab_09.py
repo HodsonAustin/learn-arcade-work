@@ -8,6 +8,7 @@ import random
 BOX_BUFFER = 30
 
 SPRITE_SCALING = 0.5
+SPRITE_SCALING_LASER = .6
 SPRITE_NATIVE_SIZE = 128
 SPRITE_SIZE = int(SPRITE_NATIVE_SIZE * SPRITE_SCALING)
 
@@ -16,245 +17,9 @@ SCREEN_HEIGHT = SPRITE_SIZE * 10
 SCREEN_TITLE = "Hitman game"
 
 MOVEMENT_SPEED = 5
+BULLET_SPEED = 10
 NUMBER_OF_COINS = 10
 
-
-class Room:
-    """
-    This class holds all the information about the
-    different rooms.
-    """
-    def __init__(self):
-        # You may want many lists. Lists for coins, monsters, etc.
-        self.wall_list = None
-        self.coin_list = None
-
-        # This holds the background images. If you don't want to be changing
-        # background images, you can delete this part.
-        self.background = None
-
-
-def setup_room_1():
-    """
-    Create and return room 1.
-    """
-    room = Room()
-
-    """ Set up the game and initialize the variables. """
-    # Sprite lists
-    room.wall_list = arcade.SpriteList()
-    room.coin_list = arcade.SpriteList()
-
-    # -- Set up the walls
-    # Create bottom and top row of boxes
-    # This y loops a list of two, the coordinate 0, and just under the top of window
-    for y in (0, SCREEN_HEIGHT - BOX_BUFFER):
-        # Loop for each box going across
-        for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
-            wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/Sprites/tile_237.png",
-                                 1.0)
-            wall.left = x
-            wall.bottom = y
-            room.wall_list.append(wall)
-
-    # Create left and right column of boxes
-    for x in (0, SCREEN_WIDTH - BOX_BUFFER):
-        # Loop for each box going across
-        for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
-            # Skip making a block 8 and 9 blocks up on the right side
-            if (y != BOX_BUFFER * 9 and y != BOX_BUFFER * 8) or x == 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_129.png",
-                                     SPRITE_SCALING)
-                wall.left = x
-                wall.bottom = y
-                room.wall_list.append(wall)
-
-    # Create obstacles in the room
-    for x in (250, SCREEN_WIDTH - 250):
-        # Loop for boxes going across
-        for y in range(60, SCREEN_HEIGHT - 60, 90):
-            wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_367.png",
-                                 SPRITE_SCALING)
-            wall.center_x = x
-            wall.center_y = y
-            room.wall_list.append(wall)
-
-    # If you want coins or monsters in a level, then add that code here.
-    for i in range(NUMBER_OF_COINS):
-        coin = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/silver.png", 1.0)
-
-        # Boolean variable if we successfully placed the coin
-        coin_placed_successfully = False
-
-        # Keep trying until success
-        while not coin_placed_successfully:
-            # Position the coin
-            coin.center_x = random.randrange(SCREEN_WIDTH)
-            coin.center_y = random.randrange(SCREEN_HEIGHT)
-
-            # See if the coin is hitting a wall
-            wall_hit_list = arcade.check_for_collision_with_list(coin, room.wall_list)
-
-            # See if the coin is hitting another coin
-            coin_hit_list = arcade.check_for_collision_with_list(coin, room.coin_list)
-
-            if len(wall_hit_list) == 0 and len(coin_hit_list) == 0:
-                # It is!
-                coin_placed_successfully = True
-
-        # Add the coin to the lists
-        room.coin_list.append(coin)
-
-    # Load the background image for this level.
-    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/tile_09.png")
-
-    return room
-
-
-def setup_room_2():
-    """
-    Create and return room 2.
-    """
-    room = Room()
-
-    """ Set up the game and initialize the variables. """
-    # Sprite lists
-    room.wall_list = arcade.SpriteList()
-    room.coin_list = arcade.SpriteList()
-
-    # -- Set up the walls
-    # Create bottom and top row of boxes
-    # This y loops a list of two, the coordinate 0, and just under the top of window
-    for y in (0, SCREEN_HEIGHT - BOX_BUFFER):
-        # Loop for each box going across
-        for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
-            if (x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14) or y != 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_237.png", 1.0)
-                wall.left = x
-                wall.bottom = y
-                room.wall_list.append(wall)
-
-    # Create left and right column of boxes
-    for x in (0, SCREEN_WIDTH - BOX_BUFFER):
-        # Loop for each box going across
-        for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
-            # Skip making a block 4 and 5 blocks up
-            if (y != BOX_BUFFER * 8 and y != BOX_BUFFER * 9) or x != 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_129.png", SPRITE_SCALING)
-                wall.left = x
-                wall.bottom = y
-                room.wall_list.append(wall)
-
-    # Create obstacles in the room
-    for x in range(250, SCREEN_WIDTH - 250, 50):
-        # Loop for boxes going across
-        for y in range(90, SCREEN_HEIGHT - 60, 75):
-            if y % 2 == 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_367.png", SPRITE_SCALING)
-                wall.center_x = x
-                wall.center_y = y
-                room.wall_list.append(wall)
-
-    for i in range(NUMBER_OF_COINS):
-        coin = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/silver.png", 1.0)
-
-        # Boolean variable if we successfully placed the coin
-        coin_placed_successfully = False
-
-        # Keep trying until success
-        while not coin_placed_successfully:
-            # Position the coin
-            coin.center_x = random.randrange(SCREEN_WIDTH)
-            coin.center_y = random.randrange(SCREEN_HEIGHT)
-
-            # See if the coin is hitting a wall
-            wall_hit_list = arcade.check_for_collision_with_list(coin, room.wall_list)
-
-            # See if the coin is hitting another coin
-            coin_hit_list = arcade.check_for_collision_with_list(coin, room.coin_list)
-
-            if len(wall_hit_list) == 0 and len(coin_hit_list) == 0:
-                # It is!
-                coin_placed_successfully = True
-
-        # Add the coin to the lists
-        room.coin_list.append(coin)
-
-    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/tile_96.png")
-
-    return room
-
-
-def setup_room_3():
-    """
-    Create and return room 3.
-    """
-    room = Room()
-
-    """ Set up the game and initialize the variables. """
-    # Sprite lists
-    room.wall_list = arcade.SpriteList()
-    room.coin_list = arcade.SpriteList()
-
-    # -- Set up the walls
-    # Create bottom and top row of boxes
-    # This y loops a list of two, the coordinate 0, and just under the top of window
-    for y in (BOX_BUFFER, SCREEN_HEIGHT):
-        # Loop for each box going across
-        for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
-            if x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14 or y != SCREEN_HEIGHT or y == BOX_BUFFER:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_129.png", SPRITE_SCALING)
-                wall.left = x
-                wall.top = y
-                room.wall_list.append(wall)
-
-    # Create left and right column of boxes
-    for x in (0, SCREEN_WIDTH - BOX_BUFFER):
-        # Loop for each box going across
-        for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
-            wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_237.png", 1.0)
-            wall.left = x
-            wall.bottom = y
-            room.wall_list.append(wall)
-
-    # Create obstacles in the room
-    for x in range(90, SCREEN_WIDTH - 90, 75):
-        # Loop for boxes going across
-        for y in range(90, SCREEN_HEIGHT - 90, 75):
-            if y % 2 == 0 and x % 2 == 0:
-                wall = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/tile_367.png", SPRITE_SCALING)
-                wall.center_x = x
-                wall.center_y = y
-                room.wall_list.append(wall)
-
-    for i in range(NUMBER_OF_COINS):
-        coin = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/silver.png", 1.0)
-
-        # Boolean variable if we successfully placed the coin
-        coin_placed_successfully = False
-
-        # Keep trying until success
-        while not coin_placed_successfully:
-            # Position the coin
-            coin.center_x = random.randrange(SCREEN_WIDTH)
-            coin.center_y = random.randrange(SCREEN_HEIGHT)
-
-            # See if the coin is hitting a wall
-            wall_hit_list = arcade.check_for_collision_with_list(coin, room.wall_list)
-
-            # See if the coin is hitting another coin
-            coin_hit_list = arcade.check_for_collision_with_list(coin, room.coin_list)
-
-            if len(wall_hit_list) == 0 and len(coin_hit_list) == 0:
-                # It is!
-                coin_placed_successfully = True
-
-        # Add the coin to the lists
-        room.coin_list.append(coin)
-
-    room.background = arcade.load_texture("/users/yello/dev/learn-arcade-work/sprites/tile_01.png")
-
-    return room
 
 
 class MyGame(arcade.Window):
@@ -330,6 +95,7 @@ class MyGame(arcade.Window):
         # Draw all the walls in this room
         self.rooms[self.current_room].wall_list.draw()
         self.rooms[self.current_room].coin_list.draw()
+        self.rooms[self.current_room].bullet_list.draw()
 
         # If you have coins or monsters, then copy and modify the line
         # above for each list.
@@ -362,47 +128,85 @@ class MyGame(arcade.Window):
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
-        if key == arcade.key.UP:
+        if key == arcade.key.W:
             self.up_pressed = True
             self.update_player_speed()
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.S:
             self.down_pressed = True
             self.update_player_speed()
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.A:
             self.left_pressed = True
             self.update_player_speed()
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.D:
             self.right_pressed = True
             self.update_player_speed()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
-        if key == arcade.key.UP:
+        if key == arcade.key.W:
             self.up_pressed = False
             self.update_player_speed()
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.S:
             self.down_pressed = False
             self.update_player_speed()
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.A:
             self.left_pressed = False
             self.update_player_speed()
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.D:
             self.right_pressed = False
             self.update_player_speed()
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        """
+        Called whenever the mouse button is clicked.
+        """
+
+        # Create a bullet
+        bullet = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/bullet.png", SPRITE_SCALING_LASER)
+
+        bullet.angle = self.player_sprite.angle
+
+        # Position the bullet
+        bullet.center_x = self.player_sprite.center_x
+        bullet.bottom = self.player_sprite.top
+        if self.player_sprite.angle == 90:
+            self.rooms[self.current_room].bullet_list.append(bullet)
+            bullet.center_x += 5
+            bullet.change_y += BULLET_SPEED
+        elif self.player_sprite.angle == 270:
+            self.rooms[self.current_room].bullet_list.append(bullet)
+            bullet.center_x -= 5
+            bullet.center_y -= 20
+            bullet.change_y -= BULLET_SPEED
+        elif self.player_sprite.angle == 180:
+            self.rooms[self.current_room].bullet_list.append(bullet)
+            bullet.center_y -= 10
+            bullet.change_x -= BULLET_SPEED
+        elif self.player_sprite.angle == 0:
+            self.rooms[self.current_room].bullet_list.append(bullet)
+            bullet.center_y -= 20
+            bullet.change_x += BULLET_SPEED
 
     def on_update(self, delta_time):
         """ Movement and game logic """
 
-        # Call update on all sprites (The sprites don't do much in this
-        # example though.)
+        # Call update on all sprites
         self.physics_engine.update()
 
         self.rooms[self.current_room].coin_list.update()
+        self.rooms[self.current_room].bullet_list.update()
 
         # Generate a list of all sprites that collided with the player.
         coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
                                                               self.rooms[self.current_room].coin_list)
+        # # Loop through each bullet
+        # for bullet in self.rooms[self.current_room].bullet_list:
+        #     bullet_hit_list = arcade.check_for_collision_with_list(bullet,
+        #                                                            self.rooms[self.current_room].wall_list)
+        # if len(self.rooms[self.current_room].bullet_list) >= 1:
+        #     for bullet in bullet_hit_list:
+        #         bullet.remove_from_sprite_lists()
 
         # Loop through each colliding sprite, remove it, and add to the score.
         for coin in coins_hit_list:

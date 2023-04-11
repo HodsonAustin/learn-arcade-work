@@ -1,3 +1,5 @@
+# Assets from freesound.org and kenney.nl
+
 import arcade
 import rooms
 
@@ -16,7 +18,10 @@ MOVEMENT_SPEED = 5
 BULLET_SPEED = 10
 NUMBER_OF_COINS = 10
 
-coin_bing = arcade.load_sound("/users/yello/dev/learn-arcade-work/silver.wav")
+coin_bing = arcade.load_sound("silver.wav")
+reload = arcade.load_sound("reload.mp3")
+shot = arcade.load_sound("shot.wav")
+dryfire = arcade.load_sound("dryfire.wav")
 
 
 class MyGame(arcade.Window):
@@ -41,6 +46,7 @@ class MyGame(arcade.Window):
         self.physics_engine = None
         self.score = 0
         self.ammunition = 8
+        self.magazine = 3
 
         # Track the current state of what key is pressed
         self.left_pressed = False
@@ -51,7 +57,7 @@ class MyGame(arcade.Window):
     def setup(self):
         """ Set up the game and initialize the variables. """
         # Set up the player
-        self.player_sprite = arcade.Sprite("/users/yello/dev/sprites/Hitman 1/hitman1_gun.png", SPRITE_SCALING)
+        self.player_sprite = arcade.Sprite("hitman1_gun.png", SPRITE_SCALING)
         self.player_sprite.center_x = 100
         self.player_sprite.center_y = 100
         self.player_list = arcade.SpriteList()
@@ -103,7 +109,7 @@ class MyGame(arcade.Window):
         # Put the text on the screen.
         output = f"Score: {self.score}"
         arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
-        ammunition = f"Ammo: {self.ammunition}"
+        ammunition = f"Ammo: {self.ammunition}/{self.magazine}"
         arcade.draw_text(ammunition, SCREEN_WIDTH - 100, 20, arcade.color.WHITE, 14)
 
     def update_player_speed(self):
@@ -141,7 +147,10 @@ class MyGame(arcade.Window):
             self.right_pressed = True
             self.update_player_speed()
         elif key == arcade.key.R:
-            self.ammunition = 8
+            if self.magazine >= 1:
+                self.ammunition = 8
+                self.magazine -= 1
+                arcade.play_sound(reload, .2)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -166,7 +175,7 @@ class MyGame(arcade.Window):
         if self.ammunition >= 1:
 
             # Create a bullet
-            bullet = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/bullet.png", SPRITE_SCALING_LASER)
+            bullet = arcade.Sprite("bullet.png", SPRITE_SCALING_LASER)
 
             bullet.angle = self.player_sprite.angle
 
@@ -178,6 +187,7 @@ class MyGame(arcade.Window):
                 bullet.center_x += 5
                 bullet.change_y += BULLET_SPEED
                 self.ammunition -= 1
+                arcade.play_sound(shot, .2)
 
             elif self.player_sprite.angle == 270:
                 self.rooms[self.current_room].bullet_list.append(bullet)
@@ -185,16 +195,23 @@ class MyGame(arcade.Window):
                 bullet.center_y -= 20
                 bullet.change_y -= BULLET_SPEED
                 self.ammunition -= 1
+                arcade.play_sound(shot, .2)
+
             elif self.player_sprite.angle == 180:
                 self.rooms[self.current_room].bullet_list.append(bullet)
                 bullet.center_y -= 10
                 bullet.change_x -= BULLET_SPEED
                 self.ammunition -= 1
+                arcade.play_sound(shot, .2)
+
             elif self.player_sprite.angle == 0:
                 self.rooms[self.current_room].bullet_list.append(bullet)
                 bullet.center_y -= 20
                 bullet.change_x += BULLET_SPEED
                 self.ammunition -= 1
+                arcade.play_sound(shot, .2)
+        elif self.ammunition == 0:
+            arcade.play_sound(dryfire, .2)
 
     def on_update(self, delta_time):
         """ Movement and game logic """

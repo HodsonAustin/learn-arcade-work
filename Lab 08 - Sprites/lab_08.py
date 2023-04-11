@@ -105,7 +105,7 @@ class MyGame(arcade.Window):
 
         # Set up the player
         # Character image from kenney.nl
-        self.player_sprite = arcade.Sprite("/users/yello/dev/knight.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("/users/yello/dev/sprites/knight.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 50
         self.player_list.append(self.player_sprite)
@@ -115,7 +115,7 @@ class MyGame(arcade.Window):
 
             # Create the coin instance
             # Coin image from kenney.nl
-            coin = Coin("/users/yello/dev/silver.png", SPRITE_SCALING_COIN)
+            coin = Coin("/users/yello/dev/sprites/silver.png", SPRITE_SCALING_COIN)
 
             # Position the coin
             coin.center_x = random.randrange(SCREEN_WIDTH)
@@ -128,7 +128,7 @@ class MyGame(arcade.Window):
 
             # Create the rat instance
             # Coin image from kenney.nl
-            rat = Rat("/users/yello/dev/rat.png", SPRITE_SCALING_RAT)
+            rat = Rat("/users/yello/dev/sprites/rat.png", SPRITE_SCALING_RAT)
 
             # Position the rat
             rat.center_x = random.randrange(SCREEN_WIDTH)
