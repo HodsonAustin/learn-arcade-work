@@ -1,4 +1,5 @@
 import arcade
+import enemies
 import random
 
 BOX_BUFFER = 30
@@ -31,6 +32,8 @@ class Room:
         self.bullet_list = None
         self.ammo_box_list = None
         self.enemy_list = None
+        self.explosions_list = []
+        self.missile_list = None
 
         # This holds the background images. If you don't want to be changing
         # background images, you can delete this part.
@@ -50,6 +53,8 @@ def setup_room_1():
     room.bullet_list = arcade.SpriteList()
     room.ammo_box_list = arcade.SpriteList()
     room.enemy_list = arcade.SpriteList()
+    room.explosions_list = arcade.SpriteList()
+    room.missile_list = arcade.SpriteList()
 
     # -- Set up the walls
     # Create bottom and top row of boxes
@@ -137,7 +142,7 @@ def setup_room_1():
         room.ammo_box_list.append(ammo_box)
 
     for i in range(NUMBER_OF_ENEMIES):
-        enemy = arcade.Sprite("zombie.png", SPRITE_SCALING)
+        enemy = enemies.Enemy("zombie.png", SPRITE_SCALING)
 
         # Boolean variable if we successfully placed the enemy
         enemy_placed_successfully = False
@@ -180,6 +185,8 @@ def setup_room_2():
     room.bullet_list = arcade.SpriteList()
     room.ammo_box_list = arcade.SpriteList()
     room.enemy_list = arcade.SpriteList()
+    room.explosions_list = arcade.SpriteList()
+    room.missile_list = arcade.SpriteList()
 
     # -- Set up the walls
     # Create bottom and top row of boxes
@@ -263,8 +270,8 @@ def setup_room_2():
         # Add the ammo_box to the lists
         room.ammo_box_list.append(ammo_box)
 
-    for i in range(NUMBER_OF_ENEMIES):
-        enemy = arcade.Sprite("zombie.png", SPRITE_SCALING)
+    for i in range(NUMBER_OF_ENEMIES*2):
+        enemy = enemies.Enemy("zombie.png", SPRITE_SCALING)
 
         # Boolean variable if we successfully placed the enemy
         enemy_placed_successfully = False
@@ -306,6 +313,8 @@ def setup_room_3():
     room.bullet_list = arcade.SpriteList()
     room.ammo_box_list = arcade.SpriteList()
     room.enemy_list = arcade.SpriteList()
+    room.explosions_list = arcade.SpriteList()
+    room.missile_list = arcade.SpriteList()
 
     # -- Set up the walls
     # Create bottom and top row of boxes
@@ -387,8 +396,8 @@ def setup_room_3():
         # Add the ammo_box to the lists
         room.ammo_box_list.append(ammo_box)
 
-    for i in range(NUMBER_OF_ENEMIES):
-        enemy = arcade.Sprite("zombie.png", SPRITE_SCALING)
+    for i in range(NUMBER_OF_ENEMIES*3):
+        enemy = enemies.Enemy("zombie.png", SPRITE_SCALING)
 
         # Boolean variable if we successfully placed the enemy
         enemy_placed_successfully = False

@@ -1,7 +1,11 @@
-# Assets from freesound.org and kenney.nl
+# Assets from freesound.org, opengameart.org and kenney.nl
 
 import arcade
 import rooms
+import explosions
+import missiles
+import math
+
 
 BOX_BUFFER = 30
 
@@ -14,9 +18,11 @@ SCREEN_WIDTH = SPRITE_SIZE * 14
 SCREEN_HEIGHT = SPRITE_SIZE * 10
 SCREEN_TITLE = "Hitman game"
 
-MOVEMENT_SPEED = 5
+MOVEMENT_SPEED = 3
 BULLET_SPEED = 10
 NUMBER_OF_COINS = 10
+
+explosion_texture_count = 60
 
 coin_bing = arcade.load_sound("silver.wav")
 reload = arcade.load_sound("reload.mp3")
@@ -39,6 +45,7 @@ class MyGame(arcade.Window):
 
         # Sprite lists
         self.current_room = 0
+        self.explosions_list = []
 
         # Set up the player
         self.rooms = None
@@ -49,13 +56,43 @@ class MyGame(arcade.Window):
         self.ammunition = 8
         self.magazine = 3
         self.health = 100
-
+        self.special = 1
 
         # Track the current state of what key is pressed
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
+
+        # Preload the animation frames. We don't do this in the __init__
+        # of the explosion sprite because it
+        # takes too long and would cause the game to pause.
+        self.explosion_texture_list = []
+
+        # Initialize variables
+        self.last_sound_time = 0
+        self.play_sound = False
+
+        columns = 9
+        count = 150
+        sprite_width = 111
+        sprite_height = 111
+
+        # Load the explosions from a sprite sheet
+        self.explosion_texture_list = arcade.load_spritesheet("explosionBig.png", sprite_width,
+                                                              sprite_height, columns, count)
+
+        # Load sounds. Sounds from kenney.nl
+        self.gun_sound = arcade.sound.load_sound(":resources:sounds/laser2.wav")
+        self.hit_sound = arcade.sound.load_sound(":resources:sounds/explosion2.wav")
+        self.coin_bing = arcade.load_sound("silver.wav")
+        self.reload = arcade.load_sound("reload.mp3")
+        self.shot = arcade.load_sound("shot.wav")
+        self.dryfire = arcade.load_sound("dryfire.wav")
+        self.collecting_ammo = arcade.load_sound("collecting_ammo.wav")
+        self.rocket_shot = arcade.load_sound("rocket_shot.wav")
+        self.missile_explosion = arcade.load_sound("missile_explode.ogg")
+        self.zombie_bite = arcade.load_sound("zombie_bite.wav")
 
     def setup(self):
         """ Set up the game and initialize the variables. """
@@ -105,7 +142,8 @@ class MyGame(arcade.Window):
         self.rooms[self.current_room].bullet_list.draw()
         self.rooms[self.current_room].ammo_box_list.draw()
         self.rooms[self.current_room].enemy_list.draw()
-
+        self.rooms[self.current_room].explosions_list.draw()
+        self.rooms[self.current_room].missile_list.draw()
 
         # If you have coins or monsters, then copy and modify the line
         # above for each list.
@@ -116,9 +154,15 @@ class MyGame(arcade.Window):
         output = f"Score: {self.score}"
         arcade.draw_text(output, 40, 40, arcade.color.WHITE, 14)
         ammunition = f"Ammo: {self.ammunition}/{self.magazine}"
+        arcade.draw_text(ammunition, SCREEN_WIDTH - 125, 60, arcade.color.WHITE, 14)
+        ammunition = f"Rockets: {self.special}"
         arcade.draw_text(ammunition, SCREEN_WIDTH - 125, 40, arcade.color.WHITE, 14)
-        health = f"Health: {self.health}/100"
+        health = f"Health: {round(self.health)}/100"
         arcade.draw_text(health, 40, SCREEN_HEIGHT - 75, arcade.color.RED, 20)
+        remaining_enemies = f"Enemies remaining: {len(self.rooms[self.current_room].enemy_list)}"
+        arcade.draw_text(remaining_enemies, 40, 75, arcade.color.RED_DEVIL, 14)
+        remaining_coins = f"Coins remaining: {len(self.rooms[self.current_room].coin_list)}"
+        arcade.draw_text(remaining_coins, SCREEN_WIDTH - 300, SCREEN_HEIGHT - 75, arcade.color.GOLD, 20)
 
     def update_player_speed(self):
 
@@ -159,8 +203,21 @@ class MyGame(arcade.Window):
                 self.ammunition = 8
                 self.magazine -= 1
                 arcade.play_sound(reload, .2)
-            else:
-                pass
+        elif key == arcade.key.SPACE:
+            if self.special >= 1:
+                # Create a missile
+                missile = missiles.Missile("missile.png", SPRITE_SCALING_LASER)
+
+                missile.angle = self.player_sprite.angle
+
+                # Position the missile
+                missile.center_x = self.player_sprite.center_x
+                missile.bottom = self.player_sprite.top
+                self.special -= 0
+                self.rooms[self.current_room].missile_list.append(missile)
+                arcade.play_sound(self.rocket_shot, .1)
+        else:
+            pass
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -231,17 +288,87 @@ class MyGame(arcade.Window):
 
         self.rooms[self.current_room].coin_list.update()
         self.rooms[self.current_room].bullet_list.update()
+        self.rooms[self.current_room].enemy_list.update()
+        self.rooms[self.current_room].wall_list.update()
+        self.rooms[self.current_room].ammo_box_list.update()
+        self.rooms[self.current_room].explosions_list.update()
+        self.rooms[self.current_room].missile_list.update()
 
         # Generate a list of all sprites that collided with the player.
         coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
                                                               self.rooms[self.current_room].coin_list)
         ammo_box_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
                                                                  self.rooms[self.current_room].ammo_box_list)
+        enemy_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
+                                                              self.rooms[self.current_room].enemy_list)
+
+        # Prevent enemies from going through walls
+        for enemy in self.rooms[self.current_room].enemy_list:
+            wall_hit_list = arcade.check_for_collision_with_list(enemy, self.rooms[self.current_room].wall_list)
+            if len(wall_hit_list) > 0:
+                enemy.change_x *= -1
+                enemy.change_y *= -1
+                enemy.center_x += enemy.change_x
+                enemy.center_y += enemy.change_y
+
+        # Loop through all missiles
+        for enemy in self.rooms[self.current_room].enemy_list:
+
+            # Loop through all explosions
+            for explosion in self.rooms[self.current_room].explosions_list:
+                if self.rooms[self.current_room].explosions_list and self.rooms[self.current_room].enemy_list:
+                    # Check for collision between missile and explosion
+                    if arcade.check_for_collision(enemy, explosion):
+                        # Remove missile and explosion
+                        enemy.remove_from_sprite_lists()
+                        explosion.remove_from_sprite_lists()
+
+        for enemy in self.rooms[self.current_room].enemy_list:
+            enemy_bullet_hit_list = arcade.check_for_collision_with_list(enemy,
+                                                                         self.rooms[self.current_room].bullet_list)
+            for bullet in enemy_bullet_hit_list:
+                enemy.health -= 25
+                self.score += 30
+                bullet.remove_from_sprite_lists()
+                if enemy.health <= 0:
+                    enemy.remove_from_sprite_lists()
+
+        # Loop through each missile
+        for missile in self.rooms[self.current_room].missile_list:
+
+            # Check this bullet to see if it hit a coin
+            hit_list = arcade.check_for_collision_with_list(missile,
+                                                            self.rooms[self.current_room].enemy_list)
+
+            # If it did...
+            if len(hit_list) > 0:
+                # Make an explosion
+                explosion = explosions.Explosion(self.explosion_texture_list)
+
+                # Move it to the location of the coin
+                explosion.center_x = hit_list[0].center_x
+                explosion.center_y = hit_list[0].center_y
+
+                # Call update() because it sets which image we start on
+                explosion.update()
+
+                # Add to a list of sprites that are explosions
+                self.rooms[self.current_room].explosions_list.append(explosion)
+                arcade.play_sound(self.missile_explosion, .1)
+
+                # Get rid of the bullet
+                missile.remove_from_sprite_lists()
+                for enemy in hit_list:
+                    enemy.health -= 50
+                    self.score += 100
+                    if enemy.health <= 0:
+                        enemy.remove_from_sprite_lists()
+
         # Loop through each bullet
         for bullet in self.rooms[self.current_room].bullet_list:
             bullet_hit_list = arcade.check_for_collision_with_list(bullet,
                                                                    self.rooms[self.current_room].wall_list)
-            for hit_wall in bullet_hit_list:
+            for wall in bullet_hit_list:
                 bullet.remove_from_sprite_lists()
 
         # Loop through each colliding sprite, remove it, and add to the score.
@@ -253,10 +380,24 @@ class MyGame(arcade.Window):
         for ammo_box in ammo_box_hit_list:
             ammo_box.remove_from_sprite_lists()
             arcade.play_sound(collecting_ammo, .5)
-            self.magazine += 1
+            self.magazine += 2
+            self.special += 1
+
+        for enemy in enemy_hit_list:
+            self.health -= .5
+            self.score -= .5
+
+                # Play sound if play_sound is True
+            if self.play_sound:
+                arcade.play_sound(self.zombie_bite, .2)
+
+        for explosion in self.rooms[self.current_room].explosions_list:
+            explosion.update()
+            explosion.draw()
 
         # Do some logic here to figure out what room we are in, and if we need to go
         # to a different room.
+
         if self.player_sprite.center_x > SCREEN_WIDTH and self.current_room == 0:
             self.current_room = 1
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
@@ -279,6 +420,41 @@ class MyGame(arcade.Window):
                                                              self.rooms[self.current_room].wall_list)
             self.player_sprite.center_x = SCREEN_WIDTH/2
             self.player_sprite.center_y = 0
+
+        for Enemy in self.rooms[self.current_room].enemy_list:
+            # Position the start at the Enemy's current location
+            start_x = Enemy.center_x
+            start_y = Enemy.center_y
+
+            # Get the destination location for the player
+            dest_x = self.player_sprite.center_x
+            dest_y = self.player_sprite.center_y
+
+            # Calculate the distance between the Enemy and the player
+            a_diff = dest_x - start_x
+            b_diff = dest_y - start_y
+            distance_fmla = math.sqrt(a_diff ** 2 + b_diff ** 2)
+
+            # If the distance is less than or equal to 50, engage the player
+            if distance_fmla <= 250:
+                Enemy.follow_sprite(self.player_sprite)
+
+        for Missile in self.rooms[self.current_room].missile_list:
+            if self.rooms[self.current_room].enemy_list:
+                Missile.follow_sprite(enemy)
+            else:
+                if self.player_sprite.angle == 90:
+                    missile.change_y += 3
+                    missile.angle = self.player_sprite.angle -90
+                elif self.player_sprite.angle == 270:
+                    missile.change_y -= 3
+                    missile.angle = self.player_sprite.angle - 90
+                elif self.player_sprite.angle == 180:
+                    missile.change_x -= 3
+                    missile.angle = self.player_sprite.angle - 90
+                elif self.player_sprite.angle == 0:
+                    missile.change_x += 3
+                    missile.angle = self.player_sprite.angle - 90
 
 
 def main():
