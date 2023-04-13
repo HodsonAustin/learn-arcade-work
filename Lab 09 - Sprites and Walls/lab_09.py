@@ -3,7 +3,7 @@ Artwork and sounds from https://kenney.nl
 """
 
 import arcade
-import random
+import rooms
 
 BOX_BUFFER = 30
 
@@ -17,7 +17,6 @@ SCREEN_HEIGHT = SPRITE_SIZE * 10
 SCREEN_TITLE = "Hitman game"
 
 MOVEMENT_SPEED = 5
-BULLET_SPEED = 10
 NUMBER_OF_COINS = 10
 
 
@@ -32,7 +31,7 @@ class MyGame(arcade.Window):
         super().__init__(width, height, title)
 
         # Sound variables
-        self.coin_collect = arcade.load_sound("/users/yello/dev/learn-arcade-work/silver.wav")
+        self.coin_collect = arcade.load_sound("silver.wav")
 
         # Sprite lists
         self.current_room = 0
@@ -53,7 +52,7 @@ class MyGame(arcade.Window):
     def setup(self):
         """ Set up the game and initialize the variables. """
         # Set up the player
-        self.player_sprite = arcade.Sprite("/users/yello/dev/sprites/Hitman 1/hitman1_gun.png", SPRITE_SCALING)
+        self.player_sprite = arcade.Sprite("hitman1_gun.png", SPRITE_SCALING)
         self.player_sprite.center_x = 100
         self.player_sprite.center_y = 100
         self.player_list = arcade.SpriteList()
@@ -63,13 +62,13 @@ class MyGame(arcade.Window):
         self.rooms = []
 
         # Create the rooms. Extend the pattern for each room.
-        room = setup_room_1()
+        room = rooms.setup_room_1()
         self.rooms.append(room)
 
-        room = setup_room_2()
+        room = rooms.setup_room_2()
         self.rooms.append(room)
 
-        room = setup_room_3()
+        room = rooms.setup_room_3()
         self.rooms.append(room)
 
         # Our starting room number
@@ -95,7 +94,6 @@ class MyGame(arcade.Window):
         # Draw all the walls in this room
         self.rooms[self.current_room].wall_list.draw()
         self.rooms[self.current_room].coin_list.draw()
-        self.rooms[self.current_room].bullet_list.draw()
 
         # If you have coins or monsters, then copy and modify the line
         # above for each list.
@@ -157,37 +155,6 @@ class MyGame(arcade.Window):
             self.right_pressed = False
             self.update_player_speed()
 
-    def on_mouse_press(self, x, y, button, modifiers):
-        """
-        Called whenever the mouse button is clicked.
-        """
-
-        # Create a bullet
-        bullet = arcade.Sprite("/users/yello/dev/learn-arcade-work/sprites/bullet.png", SPRITE_SCALING_LASER)
-
-        bullet.angle = self.player_sprite.angle
-
-        # Position the bullet
-        bullet.center_x = self.player_sprite.center_x
-        bullet.bottom = self.player_sprite.top
-        if self.player_sprite.angle == 90:
-            self.rooms[self.current_room].bullet_list.append(bullet)
-            bullet.center_x += 5
-            bullet.change_y += BULLET_SPEED
-        elif self.player_sprite.angle == 270:
-            self.rooms[self.current_room].bullet_list.append(bullet)
-            bullet.center_x -= 5
-            bullet.center_y -= 20
-            bullet.change_y -= BULLET_SPEED
-        elif self.player_sprite.angle == 180:
-            self.rooms[self.current_room].bullet_list.append(bullet)
-            bullet.center_y -= 10
-            bullet.change_x -= BULLET_SPEED
-        elif self.player_sprite.angle == 0:
-            self.rooms[self.current_room].bullet_list.append(bullet)
-            bullet.center_y -= 20
-            bullet.change_x += BULLET_SPEED
-
     def on_update(self, delta_time):
         """ Movement and game logic """
 
@@ -195,18 +162,10 @@ class MyGame(arcade.Window):
         self.physics_engine.update()
 
         self.rooms[self.current_room].coin_list.update()
-        self.rooms[self.current_room].bullet_list.update()
 
         # Generate a list of all sprites that collided with the player.
         coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
                                                               self.rooms[self.current_room].coin_list)
-        # # Loop through each bullet
-        # for bullet in self.rooms[self.current_room].bullet_list:
-        #     bullet_hit_list = arcade.check_for_collision_with_list(bullet,
-        #                                                            self.rooms[self.current_room].wall_list)
-        # if len(self.rooms[self.current_room].bullet_list) >= 1:
-        #     for bullet in bullet_hit_list:
-        #         bullet.remove_from_sprite_lists()
 
         # Loop through each colliding sprite, remove it, and add to the score.
         for coin in coins_hit_list:
