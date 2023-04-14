@@ -1,7 +1,7 @@
 # Assets from freesound.org, opengameart.org and kenney.nl
 
 import arcade
-import rooms
+import tiled_rooms
 import explosions
 import missiles
 import math
@@ -9,12 +9,12 @@ import math
 
 BOX_BUFFER = 30
 
-SPRITE_SCALING = 0.5
+SPRITE_SCALING = .5
 SPRITE_SCALING_LASER = .6
 SPRITE_NATIVE_SIZE = 128
 SPRITE_SIZE = int(SPRITE_NATIVE_SIZE * SPRITE_SCALING)
 
-SCREEN_WIDTH = SPRITE_SIZE * 14
+SCREEN_WIDTH = SPRITE_SIZE * 16
 SCREEN_HEIGHT = SPRITE_SIZE * 10
 SCREEN_TITLE = "Hitman game"
 
@@ -41,17 +41,20 @@ class MyGame(arcade.Window):
         super().__init__(width, height, title)
 
         # Sound variables
+        self.physics_engine_enemies = []
         self.coin_collect = coin_bing
 
         # Sprite lists
         self.current_room = 0
+        self.last_room = 0
         self.explosions_list = []
 
         # Set up the player
-        self.rooms = None
+        self.tiled_rooms = None
         self.player_sprite = None
         self.player_list = None
         self.physics_engine = None
+        self.physics_engine_enemy = None
         self.score = 0
         self.ammunition = 8
         self.magazine = 3
@@ -104,25 +107,33 @@ class MyGame(arcade.Window):
         self.player_list.append(self.player_sprite)
 
         # Our list of rooms
-        self.rooms = []
+        self.tiled_rooms = []
 
         # Create the rooms. Extend the pattern for each room.
-        room = rooms.setup_room_1()
-        self.rooms.append(room)
+        room = tiled_rooms.setup_room_1()
+        self.tiled_rooms.append(room)
 
-        room = rooms.setup_room_2()
-        self.rooms.append(room)
+        room = tiled_rooms.setup_room_2()
+        self.tiled_rooms.append(room)
 
-        room = rooms.setup_room_3()
-        self.rooms.append(room)
+        room = tiled_rooms.setup_room_3()
+        self.tiled_rooms.append(room)
+
+        room = tiled_rooms.setup_room_4()
+        self.tiled_rooms.append(room)
 
         # Our starting room number
         self.current_room = 0
 
+        self.last_room = -1
+
         # Create a physics engine for this room
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                         self.rooms[self.current_room].wall_list)
-
+                                                         self.tiled_rooms[self.current_room].wall_list)
+        # Create a list of physics engines for the enemies in this room
+        for enemy in self.tiled_rooms[self.current_room].enemy_list:
+            physics_engine_enemy = arcade.PhysicsEngineSimple(enemy, self.tiled_rooms[self.current_room].wall_list)
+            self.physics_engine_enemies.append(physics_engine_enemy)
     def on_draw(self):
         """
         Render the screen.
@@ -131,19 +142,17 @@ class MyGame(arcade.Window):
         # This command has to happen before we start drawing
         self.clear()
 
-        # Draw the background texture
-        arcade.draw_lrwh_rectangle_textured(0, 0,
-                                            SCREEN_WIDTH, SCREEN_HEIGHT,
-                                            self.rooms[self.current_room].background)
+        # Draw our Scene
+        self.tiled_rooms[self.current_room].scene.draw()
 
         # Draw all the walls in this room
-        self.rooms[self.current_room].wall_list.draw()
-        self.rooms[self.current_room].coin_list.draw()
-        self.rooms[self.current_room].bullet_list.draw()
-        self.rooms[self.current_room].ammo_box_list.draw()
-        self.rooms[self.current_room].enemy_list.draw()
-        self.rooms[self.current_room].explosions_list.draw()
-        self.rooms[self.current_room].missile_list.draw()
+        self.tiled_rooms[self.current_room].scene.draw()
+        self.tiled_rooms[self.current_room].coin_list.draw()
+        self.tiled_rooms[self.current_room].bullet_list.draw()
+        self.tiled_rooms[self.current_room].ammo_box_list.draw()
+        self.tiled_rooms[self.current_room].enemy_list.draw()
+        self.tiled_rooms[self.current_room].explosions_list.draw()
+        self.tiled_rooms[self.current_room].missile_list.draw()
 
         # If you have coins or monsters, then copy and modify the line
         # above for each list.
@@ -159,9 +168,9 @@ class MyGame(arcade.Window):
         arcade.draw_text(ammunition, SCREEN_WIDTH - 125, 40, arcade.color.WHITE, 14)
         health = f"Health: {round(self.health)}/100"
         arcade.draw_text(health, 40, SCREEN_HEIGHT - 75, arcade.color.RED, 20)
-        remaining_enemies = f"Enemies remaining: {len(self.rooms[self.current_room].enemy_list)}"
+        remaining_enemies = f"Enemies remaining: {len(self.tiled_rooms[self.current_room].enemy_list)}"
         arcade.draw_text(remaining_enemies, 40, 75, arcade.color.RED_DEVIL, 14)
-        remaining_coins = f"Coins remaining: {len(self.rooms[self.current_room].coin_list)}"
+        remaining_coins = f"Coins remaining: {len(self.tiled_rooms[self.current_room].coin_list)}"
         arcade.draw_text(remaining_coins, SCREEN_WIDTH - 300, SCREEN_HEIGHT - 75, arcade.color.GOLD, 20)
 
     def update_player_speed(self):
@@ -205,6 +214,7 @@ class MyGame(arcade.Window):
                 arcade.play_sound(reload, .2)
         elif key == arcade.key.SPACE:
             if self.special >= 1:
+
                 # Create a missile
                 missile = missiles.Missile("missile.png", SPRITE_SCALING_LASER)
 
@@ -214,7 +224,7 @@ class MyGame(arcade.Window):
                 missile.center_x = self.player_sprite.center_x
                 missile.bottom = self.player_sprite.top
                 self.special -= 0
-                self.rooms[self.current_room].missile_list.append(missile)
+                self.tiled_rooms[self.current_room].missile_list.append(missile)
                 arcade.play_sound(self.rocket_shot, .1)
         else:
             pass
@@ -250,14 +260,14 @@ class MyGame(arcade.Window):
             bullet.center_x = self.player_sprite.center_x
             bullet.bottom = self.player_sprite.top
             if self.player_sprite.angle == 90:
-                self.rooms[self.current_room].bullet_list.append(bullet)
+                self.tiled_rooms[self.current_room].bullet_list.append(bullet)
                 bullet.center_x += 5
                 bullet.change_y += BULLET_SPEED
                 self.ammunition -= 1
                 arcade.play_sound(shot, .2)
 
             elif self.player_sprite.angle == 270:
-                self.rooms[self.current_room].bullet_list.append(bullet)
+                self.tiled_rooms[self.current_room].bullet_list.append(bullet)
                 bullet.center_x -= 5
                 bullet.center_y -= 20
                 bullet.change_y -= BULLET_SPEED
@@ -265,14 +275,14 @@ class MyGame(arcade.Window):
                 arcade.play_sound(shot, .2)
 
             elif self.player_sprite.angle == 180:
-                self.rooms[self.current_room].bullet_list.append(bullet)
+                self.tiled_rooms[self.current_room].bullet_list.append(bullet)
                 bullet.center_y -= 10
                 bullet.change_x -= BULLET_SPEED
                 self.ammunition -= 1
                 arcade.play_sound(shot, .2)
 
             elif self.player_sprite.angle == 0:
-                self.rooms[self.current_room].bullet_list.append(bullet)
+                self.tiled_rooms[self.current_room].bullet_list.append(bullet)
                 bullet.center_y -= 20
                 bullet.change_x += BULLET_SPEED
                 self.ammunition -= 1
@@ -284,48 +294,40 @@ class MyGame(arcade.Window):
         """ Movement and game logic """
 
         # Call update on all sprites
-        self.physics_engine.update()
+        global enemy, missile
 
-        self.rooms[self.current_room].coin_list.update()
-        self.rooms[self.current_room].bullet_list.update()
-        self.rooms[self.current_room].enemy_list.update()
-        self.rooms[self.current_room].wall_list.update()
-        self.rooms[self.current_room].ammo_box_list.update()
-        self.rooms[self.current_room].explosions_list.update()
-        self.rooms[self.current_room].missile_list.update()
+        # Call update on all sprites
+        self.physics_engine.update()
+        for physics_engine_enemy in self.physics_engine_enemies:
+            physics_engine_enemy.update()
+
+        self.tiled_rooms[self.current_room].coin_list.update()
+        self.tiled_rooms[self.current_room].bullet_list.update()
+        self.tiled_rooms[self.current_room].enemy_list.update()
+        self.tiled_rooms[self.current_room].ammo_box_list.update()
+        self.tiled_rooms[self.current_room].explosions_list.update()
+        self.tiled_rooms[self.current_room].missile_list.update()
 
         # Generate a list of all sprites that collided with the player.
         coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
-                                                              self.rooms[self.current_room].coin_list)
+                                                              self.tiled_rooms[self.current_room].coin_list)
         ammo_box_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
-                                                                 self.rooms[self.current_room].ammo_box_list)
+                                                                 self.tiled_rooms[self.current_room].ammo_box_list)
         enemy_hit_list = arcade.check_for_collision_with_list(self.player_sprite,
-                                                              self.rooms[self.current_room].enemy_list)
+                                                              self.tiled_rooms[self.current_room].enemy_list)
 
-        # Prevent enemies from going through walls
-        for enemy in self.rooms[self.current_room].enemy_list:
-            wall_hit_list = arcade.check_for_collision_with_list(enemy, self.rooms[self.current_room].wall_list)
-            if len(wall_hit_list) > 0:
-                enemy.change_x *= -1
-                enemy.change_y *= -1
-                enemy.center_x += enemy.change_x
-                enemy.center_y += enemy.change_y
+        # Loop through all explosions and enemies to check for collisions
+        if self.tiled_rooms[self.current_room].enemy_list:
+            for enemy in self.tiled_rooms[self.current_room].enemy_list:
+                if arcade.check_for_collision_with_list(enemy, self.tiled_rooms[self.current_room].explosions_list):
+                    # Remove enemy and explosion
+                    enemy.remove_from_sprite_lists()
 
-        # Loop through all missiles
-        for enemy in self.rooms[self.current_room].enemy_list:
-
-            # Loop through all explosions
-            for explosion in self.rooms[self.current_room].explosions_list:
-                if self.rooms[self.current_room].explosions_list and self.rooms[self.current_room].enemy_list:
-                    # Check for collision between missile and explosion
-                    if arcade.check_for_collision(enemy, explosion):
-                        # Remove missile and explosion
-                        enemy.remove_from_sprite_lists()
-                        explosion.remove_from_sprite_lists()
-
-        for enemy in self.rooms[self.current_room].enemy_list:
+        # Loop through all enemies to check for bullet collisions and remove enemies if necessary
+        for enemy in self.tiled_rooms[self.current_room].enemy_list:
             enemy_bullet_hit_list = arcade.check_for_collision_with_list(enemy,
-                                                                         self.rooms[self.current_room].bullet_list)
+                                                                         self.tiled_rooms[self.current_room]
+                                                                         .bullet_list)
             for bullet in enemy_bullet_hit_list:
                 enemy.health -= 25
                 self.score += 30
@@ -333,30 +335,19 @@ class MyGame(arcade.Window):
                 if enemy.health <= 0:
                     enemy.remove_from_sprite_lists()
 
-        # Loop through each missile
-        for missile in self.rooms[self.current_room].missile_list:
-
-            # Check this bullet to see if it hit a coin
-            hit_list = arcade.check_for_collision_with_list(missile,
-                                                            self.rooms[self.current_room].enemy_list)
-
-            # If it did...
-            if len(hit_list) > 0:
-                # Make an explosion
+        # Loop through all missiles to check for collisions with enemies and create explosions if necessary
+        for missile in self.tiled_rooms[self.current_room].missile_list:
+            hit_list = arcade.check_for_collision_with_list(missile, self.tiled_rooms[self.current_room].enemy_list)
+            if hit_list:
+                # Create explosion
                 explosion = explosions.Explosion(self.explosion_texture_list)
-
-                # Move it to the location of the coin
                 explosion.center_x = hit_list[0].center_x
                 explosion.center_y = hit_list[0].center_y
-
-                # Call update() because it sets which image we start on
                 explosion.update()
+                self.tiled_rooms[self.current_room].explosions_list.append(explosion)
+                arcade.play_sound(self.missile_explosion, 0.1)
 
-                # Add to a list of sprites that are explosions
-                self.rooms[self.current_room].explosions_list.append(explosion)
-                arcade.play_sound(self.missile_explosion, .1)
-
-                # Get rid of the bullet
+                # Remove missile and enemy if necessary
                 missile.remove_from_sprite_lists()
                 for enemy in hit_list:
                     enemy.health -= 50
@@ -364,11 +355,15 @@ class MyGame(arcade.Window):
                     if enemy.health <= 0:
                         enemy.remove_from_sprite_lists()
 
+        # Remove missiles from the last room
+        for missile in self.tiled_rooms[self.last_room].missile_list:
+            missile.remove_from_sprite_lists()
+
         # Loop through each bullet
-        for bullet in self.rooms[self.current_room].bullet_list:
+        for bullet in self.tiled_rooms[self.current_room].bullet_list:
             bullet_hit_list = arcade.check_for_collision_with_list(bullet,
-                                                                   self.rooms[self.current_room].wall_list)
-            for wall in bullet_hit_list:
+                                                                   self.tiled_rooms[self.current_room].wall_list)
+            for _ in bullet_hit_list:
                 bullet.remove_from_sprite_lists()
 
         # Loop through each colliding sprite, remove it, and add to the score.
@@ -387,11 +382,11 @@ class MyGame(arcade.Window):
             self.health -= .5
             self.score -= .5
 
-                # Play sound if play_sound is True
+            # Play sound if play_sound is True
             if self.play_sound:
                 arcade.play_sound(self.zombie_bite, .2)
 
-        for explosion in self.rooms[self.current_room].explosions_list:
+        for explosion in self.tiled_rooms[self.current_room].explosions_list:
             explosion.update()
             explosion.draw()
 
@@ -401,27 +396,86 @@ class MyGame(arcade.Window):
         if self.player_sprite.center_x > SCREEN_WIDTH and self.current_room == 0:
             self.current_room = 1
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                             self.rooms[self.current_room].wall_list)
+                                                             self.tiled_rooms[self.current_room].wall_list)
+            # Create a list of physics engines for the enemies in this room
+            self.physics_engine_enemies = []
+            for enemy in self.tiled_rooms[self.current_room].enemy_list:
+                physics_engine_enemy = arcade.PhysicsEngineSimple(enemy,
+                                                                  self.tiled_rooms[self.current_room].wall_list)
+                self.physics_engine_enemies.append(physics_engine_enemy)
             self.player_sprite.center_x = 0
+
         elif self.player_sprite.center_x < 0 and self.current_room == 1:
             self.current_room = 0
+            self.last_room = 1
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                             self.rooms[self.current_room].wall_list)
+                                                             self.tiled_rooms[self.current_room].wall_list)
+            # Create a list of physics engines for the enemies in this room
+            self.physics_engine_enemies = []
+            for enemy in self.tiled_rooms[self.current_room].enemy_list:
+                physics_engine_enemy = arcade.PhysicsEngineSimple(enemy,
+                                                                  self.tiled_rooms[self.current_room].wall_list)
+                self.physics_engine_enemies.append(physics_engine_enemy)
+
             self.player_sprite.center_x = SCREEN_WIDTH
+
         elif self.player_sprite.center_y < 0 and self.current_room == 1:
             self.current_room = 2
+            self.last_room = 1
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                             self.rooms[self.current_room].wall_list)
-            self.player_sprite.center_x = SCREEN_WIDTH/2
-            self.player_sprite.center_y = SCREEN_HEIGHT - BOX_BUFFER
+                                                             self.tiled_rooms[self.current_room].wall_list)
+            # Create a list of physics engines for the enemies in this room
+            self.physics_engine_enemies = []
+            for enemy in self.tiled_rooms[self.current_room].enemy_list:
+                physics_engine_enemy = arcade.PhysicsEngineSimple(enemy,
+                                                                  self.tiled_rooms[self.current_room].wall_list)
+                self.physics_engine_enemies.append(physics_engine_enemy)
+
+            self.player_sprite.center_y = SCREEN_HEIGHT
+
         elif self.player_sprite.center_y > SCREEN_HEIGHT and self.current_room == 2:
             self.current_room = 1
+            self.last_room = 2
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                             self.rooms[self.current_room].wall_list)
+                                                             self.tiled_rooms[self.current_room].wall_list)
+            # Create a list of physics engines for the enemies in this room
+            self.physics_engine_enemies = []
+            for enemy in self.tiled_rooms[self.current_room].enemy_list:
+                physics_engine_enemy = arcade.PhysicsEngineSimple(enemy,
+                                                                  self.tiled_rooms[self.current_room].wall_list)
+                self.physics_engine_enemies.append(physics_engine_enemy)
+
+            self.player_sprite.center_y = 0
+
+        elif self.player_sprite.center_x > SCREEN_WIDTH and self.current_room == 2:
+            self.current_room = 3
+            self.last_room = 2
+            self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                             self.tiled_rooms[self.current_room].wall_list)
+
+            # Create a list of physics engines for the enemies in this room
+            self.physics_engine_enemies = []
+            for enemy in self.tiled_rooms[self.current_room].enemy_list:
+                physics_engine_enemy = arcade.PhysicsEngineSimple(enemy,
+                                                                  self.tiled_rooms[self.current_room].wall_list)
+                self.physics_engine_enemies.append(physics_engine_enemy)
+            self.player_sprite.center_x = SCREEN_WIDTH/2
+            self.player_sprite.center_y = 0
+        elif self.player_sprite.center_x < SCREEN_WIDTH and self.current_room == 3:
+            self.current_room = 3
+            self.last_room = 2
+            self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                             self.tiled_rooms[self.current_room].wall_list)
+            # Create a list of physics engines for the enemies in this room
+            self.physics_engine_enemies = []
+            for enemy in self.tiled_rooms[self.current_room].enemy_list:
+                physics_engine_enemy = arcade.PhysicsEngineSimple(enemy,
+                                                                  self.tiled_rooms[self.current_room].wall_list)
+                self.physics_engine_enemies.append(physics_engine_enemy)
             self.player_sprite.center_x = SCREEN_WIDTH/2
             self.player_sprite.center_y = 0
 
-        for Enemy in self.rooms[self.current_room].enemy_list:
+        for Enemy in self.tiled_rooms[self.current_room].enemy_list:
             # Position the start at the Enemy's current location
             start_x = Enemy.center_x
             start_y = Enemy.center_y
@@ -439,13 +493,13 @@ class MyGame(arcade.Window):
             if distance_fmla <= 250:
                 Enemy.follow_sprite(self.player_sprite)
 
-        for Missile in self.rooms[self.current_room].missile_list:
-            if self.rooms[self.current_room].enemy_list:
+        for Missile in self.tiled_rooms[self.current_room].missile_list:
+            if self.tiled_rooms[self.current_room].enemy_list:
                 Missile.follow_sprite(enemy)
             else:
                 if self.player_sprite.angle == 90:
                     missile.change_y += 3
-                    missile.angle = self.player_sprite.angle -90
+                    missile.angle = self.player_sprite.angle - 90
                 elif self.player_sprite.angle == 270:
                     missile.change_y -= 3
                     missile.angle = self.player_sprite.angle - 90

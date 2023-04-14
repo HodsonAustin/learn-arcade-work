@@ -1,6 +1,17 @@
 import arcade
-import enemies
 import random
+import enemies
+
+TILE_SCALING = 1
+
+# Player starting position
+PLAYER_START_X = 64
+PLAYER_START_Y = 225
+
+# Layer Names from our TileMap
+LAYER_NAME_WALLS = "walls"
+LAYER_NAME_DEBRIS = "debris"
+LAYER_NAME_GROUND = "ground"
 
 BOX_BUFFER = 30
 
@@ -34,6 +45,7 @@ class Room:
         self.enemy_list = None
         self.explosions_list = []
         self.missile_list = None
+        self.tile_map = None
 
         # This holds the background images. If you don't want to be changing
         # background images, you can delete this part.
@@ -46,6 +58,30 @@ def setup_room_1():
     """
     room = Room()
 
+    # Set up tile map
+
+    room.map_name = "room_1.tmx"
+
+    # Layer specific options are defined based on Layer names in a dictionary
+    # Doing this will make the SpriteList for the platforms layer
+    # use spatial hashing for detection.
+    layer_options = {
+        "walls": {
+            "use_spatial_hash": True,
+        },
+    }
+    # Read in the tiled map
+    room.tile_map = arcade.load_tilemap(room.map_name, TILE_SCALING, layer_options)
+
+    # Initialize Scene with our TileMap, this will automatically add all layers
+    # from the map as SpriteLists in the scene in the proper order.
+    room.scene = arcade.Scene.from_tilemap(room.tile_map)
+
+    # --- Other stuff
+    # Set the background color
+    if room.tile_map.background_color:
+        arcade.set_background_color(room.tile_map.background_color)
+
     """ Set up the game and initialize the variables. """
     # Sprite lists
     room.wall_list = arcade.SpriteList()
@@ -56,39 +92,8 @@ def setup_room_1():
     room.explosions_list = arcade.SpriteList()
     room.missile_list = arcade.SpriteList()
 
-    # -- Set up the walls
-    # Create bottom and top row of boxes
-    # This y loops a list of two, the coordinate 0, and just under the top of window
-    for y in (0, SCREEN_HEIGHT - BOX_BUFFER):
-        # Loop for each box going across
-        for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
-            wall = arcade.Sprite("tile_237.png",
-                                 1.0)
-            wall.left = x
-            wall.bottom = y
-            room.wall_list.append(wall)
-
-    # Create left and right column of boxes
-    for x in (0, SCREEN_WIDTH - BOX_BUFFER):
-        # Loop for each box going across
-        for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
-            # Skip making a block 8 and 9 blocks up on the right side
-            if (y != BOX_BUFFER * 9 and y != BOX_BUFFER * 8) or x == 0:
-                wall = arcade.Sprite("tile_129.png",
-                                     SPRITE_SCALING)
-                wall.left = x
-                wall.bottom = y
-                room.wall_list.append(wall)
-
-    # Create obstacles in the room
-    for x in (250, SCREEN_WIDTH - 250):
-        # Loop for boxes going across
-        for y in range(60, SCREEN_HEIGHT - 60, 90):
-            wall = arcade.Sprite("tile_367.png",
-                                 SPRITE_SCALING)
-            wall.center_x = x
-            wall.center_y = y
-            room.wall_list.append(wall)
+    # Get the "walls" SpriteList from the scene and assign it to the Room's wall_list attribute
+    room.wall_list = room.scene[LAYER_NAME_WALLS]
 
     # If you want coins or monsters in a level, then add that code here.
     for i in range(NUMBER_OF_COINS):
@@ -166,9 +171,6 @@ def setup_room_1():
         # Add the ammo_box to the lists
         room.enemy_list.append(enemy)
 
-    # Load the background image for this level.
-    room.background = arcade.load_texture("tile_09.png")
-
     return room
 
 
@@ -177,6 +179,30 @@ def setup_room_2():
     Create and return room 2.
     """
     room = Room()
+
+    # Set up tile map
+
+    room.map_name = "room_2.tmx"
+
+    # Layer specific options are defined based on Layer names in a dictionary
+    # Doing this will make the SpriteList for the platforms layer
+    # use spatial hashing for detection.
+    layer_options = {
+        "walls": {
+            "use_spatial_hash": True,
+        },
+    }
+    # Read in the tiled map
+    room.tile_map = arcade.load_tilemap(room.map_name, TILE_SCALING, layer_options)
+
+    # Initialize Scene with our TileMap, this will automatically add all layers
+    # from the map as SpriteLists in the scene in the proper order.
+    room.scene = arcade.Scene.from_tilemap(room.tile_map)
+
+    # --- Other stuff
+    # Set the background color
+    if room.tile_map.background_color:
+        arcade.set_background_color(room.tile_map.background_color)
 
     """ Set up the game and initialize the variables. """
     # Sprite lists
@@ -188,39 +214,10 @@ def setup_room_2():
     room.explosions_list = arcade.SpriteList()
     room.missile_list = arcade.SpriteList()
 
-    # -- Set up the walls
-    # Create bottom and top row of boxes
-    # This y loops a list of two, the coordinate 0, and just under the top of window
-    for y in (0, SCREEN_HEIGHT - BOX_BUFFER):
-        # Loop for each box going across
-        for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
-            if (x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14) or y != 0:
-                wall = arcade.Sprite("tile_237.png", 1.0)
-                wall.left = x
-                wall.bottom = y
-                room.wall_list.append(wall)
+    # Get the "walls" SpriteList from the scene and assign it to the Room's wall_list attribute
+    room.wall_list = room.scene[LAYER_NAME_WALLS]
 
-    # Create left and right column of boxes
-    for x in (0, SCREEN_WIDTH - BOX_BUFFER):
-        # Loop for each box going across
-        for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
-            # Skip making a block 4 and 5 blocks up
-            if (y != BOX_BUFFER * 8 and y != BOX_BUFFER * 9) or x != 0:
-                wall = arcade.Sprite("tile_129.png", SPRITE_SCALING)
-                wall.left = x
-                wall.bottom = y
-                room.wall_list.append(wall)
-
-    # Create obstacles in the room
-    for x in range(250, SCREEN_WIDTH - 250, 50):
-        # Loop for boxes going across
-        for y in range(90, SCREEN_HEIGHT - 60, 75):
-            if y % 2 == 0:
-                wall = arcade.Sprite("tile_367.png", SPRITE_SCALING)
-                wall.center_x = x
-                wall.center_y = y
-                room.wall_list.append(wall)
-
+    # If you want coins or monsters in a level, then add that code here.
     for i in range(NUMBER_OF_COINS):
         coin = arcade.Sprite("silver.png", 1.0)
 
@@ -245,6 +242,7 @@ def setup_room_2():
 
         # Add the coin to the lists
         room.coin_list.append(coin)
+
     for i in range(NUMBER_OF_AMMO_BOX):
         ammo_box = arcade.Sprite("ammo_box.png", 1.0)
 
@@ -270,7 +268,7 @@ def setup_room_2():
         # Add the ammo_box to the lists
         room.ammo_box_list.append(ammo_box)
 
-    for i in range(NUMBER_OF_ENEMIES*2):
+    for i in range(NUMBER_OF_ENEMIES):
         enemy = enemies.Enemy("zombie.png", SPRITE_SCALING)
 
         # Boolean variable if we successfully placed the enemy
@@ -294,8 +292,6 @@ def setup_room_2():
 
         # Add the ammo_box to the lists
         room.enemy_list.append(enemy)
-
-    room.background = arcade.load_texture("tile_96.png")
 
     return room
 
@@ -306,6 +302,30 @@ def setup_room_3():
     """
     room = Room()
 
+    # Set up tile map
+
+    room.map_name = "room_3.tmx"
+
+    # Layer specific options are defined based on Layer names in a dictionary
+    # Doing this will make the SpriteList for the platforms layer
+    # use spatial hashing for detection.
+    layer_options = {
+        "walls": {
+            "use_spatial_hash": True,
+        },
+    }
+    # Read in the tiled map
+    room.tile_map = arcade.load_tilemap(room.map_name, TILE_SCALING, layer_options)
+
+    # Initialize Scene with our TileMap, this will automatically add all layers
+    # from the map as SpriteLists in the scene in the proper order.
+    room.scene = arcade.Scene.from_tilemap(room.tile_map)
+
+    # --- Other stuff
+    # Set the background color
+    if room.tile_map.background_color:
+        arcade.set_background_color(room.tile_map.background_color)
+
     """ Set up the game and initialize the variables. """
     # Sprite lists
     room.wall_list = arcade.SpriteList()
@@ -316,37 +336,56 @@ def setup_room_3():
     room.explosions_list = arcade.SpriteList()
     room.missile_list = arcade.SpriteList()
 
-    # -- Set up the walls
-    # Create bottom and top row of boxes
-    # This y loops a list of two, the coordinate 0, and just under the top of window
-    for y in (BOX_BUFFER, SCREEN_HEIGHT):
-        # Loop for each box going across
-        for x in range(0, SCREEN_WIDTH, BOX_BUFFER):
-            if x != BOX_BUFFER * 15 and x != BOX_BUFFER * 14 or y != SCREEN_HEIGHT or y == BOX_BUFFER:
-                wall = arcade.Sprite("tile_129.png", SPRITE_SCALING)
-                wall.left = x
-                wall.top = y
-                room.wall_list.append(wall)
+    # Get the "walls" SpriteList from the scene and assign it to the Room's wall_list attribute
+    room.wall_list = room.scene[LAYER_NAME_WALLS]
 
-    # Create left and right column of boxes
-    for x in (0, SCREEN_WIDTH - BOX_BUFFER):
-        # Loop for each box going across
-        for y in range(BOX_BUFFER, SCREEN_HEIGHT - BOX_BUFFER, BOX_BUFFER):
-            wall = arcade.Sprite("tile_237.png", 1.0)
-            wall.left = x
-            wall.bottom = y
-            room.wall_list.append(wall)
+    return room
 
-    # Create obstacles in the room
-    for x in range(90, SCREEN_WIDTH - 90, 75):
-        # Loop for boxes going across
-        for y in range(90, SCREEN_HEIGHT - 90, 75):
-            if y % 2 == 0 and x % 2 == 0:
-                wall = arcade.Sprite("tile_367.png", SPRITE_SCALING)
-                wall.center_x = x
-                wall.center_y = y
-                room.wall_list.append(wall)
 
+def setup_room_4():
+    """
+    Create and return room 4.
+    """
+    room = Room()
+
+    # Set up tile map
+
+    room.map_name = "room_4.tmx"
+
+    # Layer specific options are defined based on Layer names in a dictionary
+    # Doing this will make the SpriteList for the platforms layer
+    # use spatial hashing for detection.
+    layer_options = {
+        "walls": {
+            "use_spatial_hash": True,
+        },
+    }
+
+    # Read in the tiled map
+    room.tile_map = arcade.load_tilemap(room.map_name, TILE_SCALING, layer_options)
+
+    # Initialize Scene with our TileMap, this will automatically add all layers
+    # from the map as SpriteLists in the scene in the proper order.
+    room.scene = arcade.Scene.from_tilemap(room.tile_map)
+
+    # --- Other stuff
+    # Set the background color
+    if room.tile_map.background_color:
+        arcade.set_background_color(room.tile_map.background_color)
+
+    """ Set up the game and initialize the variables. """
+    # Sprite lists
+    room.coin_list = arcade.SpriteList()
+    room.bullet_list = arcade.SpriteList()
+    room.ammo_box_list = arcade.SpriteList()
+    room.enemy_list = arcade.SpriteList()
+    room.explosions_list = arcade.SpriteList()
+    room.missile_list = arcade.SpriteList()
+
+    # Get the "walls" SpriteList from the scene and assign it to the Room's wall_list attribute
+    room.wall_list = room.scene[LAYER_NAME_WALLS]
+
+    # If you want coins or monsters in a level, then add that code here.
     for i in range(NUMBER_OF_COINS):
         coin = arcade.Sprite("silver.png", 1.0)
 
@@ -371,6 +410,7 @@ def setup_room_3():
 
         # Add the coin to the lists
         room.coin_list.append(coin)
+
     for i in range(NUMBER_OF_AMMO_BOX):
         ammo_box = arcade.Sprite("ammo_box.png", 1.0)
 
@@ -396,7 +436,7 @@ def setup_room_3():
         # Add the ammo_box to the lists
         room.ammo_box_list.append(ammo_box)
 
-    for i in range(NUMBER_OF_ENEMIES*3):
+    for i in range(NUMBER_OF_ENEMIES):
         enemy = enemies.Enemy("zombie.png", SPRITE_SCALING)
 
         # Boolean variable if we successfully placed the enemy
@@ -420,7 +460,5 @@ def setup_room_3():
 
         # Add the ammo_box to the lists
         room.enemy_list.append(enemy)
-
-    room.background = arcade.load_texture("tile_01.png")
 
     return room
