@@ -64,3 +64,13 @@ class Enemy(arcade.Sprite):
             self.center_x += min(SPRITE_SPEED, player_sprite.center_x - self.center_x)
         elif self.center_x > player_sprite.center_x:
             self.center_x -= min(SPRITE_SPEED, self.center_x - player_sprite.center_x)
+
+
+class SmartEnemy(Enemy):
+    """
+    This class represents the Enemy on our screen.
+    """
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+        self.health = 75
+
