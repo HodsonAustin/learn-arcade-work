@@ -457,11 +457,12 @@ class MyGame(arcade.Window):
         elif self.ammunition == 0:
             arcade.play_sound(self.dryfire, .2)
 
+    # noinspection PyGlobalUndefined
     def on_update(self, delta_time):
         """ Movement and game logic """
 
         # Call update on all sprites
-        global enemy, missile
+        global enemy, missile, enemy_hit_list
 
         # Call update on all sprites
         self.physics_engine.update()
@@ -555,7 +556,7 @@ class MyGame(arcade.Window):
         if self.tiled_rooms[self.current_room].enemy_list is not None:
             for ammo_box in ammo_box_hit_list:
                 ammo_box.remove_from_sprite_lists()
-                arcade.play_sound(self.collecting_ammo, .5)
+                arcade.play_sound(self.collecting_ammo, 1.5)
                 self.magazine += 2
                 self.special += 1
 
@@ -563,7 +564,7 @@ class MyGame(arcade.Window):
         if self.tiled_rooms[self.current_room].enemy_list is not None:
             for enemy in enemy_hit_list:
                 if self.health >= 0:
-                    self.health -= .1
+                    self.health -= .3
                     self.score -= .01
                 else:
                     pass
@@ -760,7 +761,7 @@ class MyGame(arcade.Window):
                     distance_fmla = math.sqrt(a_diff ** 2 + b_diff ** 2)
 
                     # If the distance is less than or equal to 50, engage the player
-                    if distance_fmla <= 250:
+                    if distance_fmla <= 300:
                         Enemy.follow_sprite(self.player_sprite)
 
         # loop through the missiles to heat seek or move off-screen.
